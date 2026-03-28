@@ -2410,6 +2410,7 @@ async function enhancePrompt(data) {
 ルール：
 - 日本語で3000字〜最大4000字程度まで情報を詳述し、大幅に拡張すること
 - 文章が途中で切れないよう、必ず末尾まで完結させること
+- 推敲後の文は基本的に「体言止め」を多用し、情報の密度を高めること
 - {{user}}表記を維持
 - 【】セクション構造を維持
 - 好感度・執着度の内部管理システムを維持
@@ -3089,7 +3090,7 @@ async function runAI(btnId, fn) {
 document.getElementById('btn-ai-prompt').addEventListener('click', () => {
   runAI('btn-ai-prompt', async () => {
     const result = await enhancePrompt(currentData);
-    const trimmed = result.substring(0, 4000);
+    const trimmed = result;
     currentData.charSetting.prompt = trimmed;
     document.getElementById('output-prompt').value = trimmed;
     document.getElementById('count-prompt').textContent = `${trimmed.length}字 / 4000字`;
@@ -3104,7 +3105,7 @@ document.getElementById('btn-ai-kw-all').addEventListener('click', () => {
     for (let i = 0; i < currentData.keywordBook.length; i++) {
       try {
         const result = await enhanceKeywordBook(currentData, i);
-        const trimmed = result.substring(0, 400);
+        const trimmed = result;
         currentData.keywordBook[i].info = trimmed;
         showToast(`KW${i+1} 強化完了 (${i+1}/${currentData.keywordBook.length})`, 'info');
       } catch (e) {
@@ -3122,7 +3123,7 @@ document.getElementById('btn-ai-firstmsg').addEventListener('click', () => {
     for (let i = 0; i < currentData.initialSettings.length; i++) {
       try {
         const result = await enhanceFirstMessage(currentData, i);
-        const trimmed = result.substring(0, 500);
+        const trimmed = result;
         currentData.initialSettings[i].firstMessage = trimmed;
       } catch (e) {
         showToast(`初期設定${i+1} エラー: ${e.message}`, 'error');
@@ -3137,7 +3138,7 @@ document.getElementById('btn-ai-firstmsg').addEventListener('click', () => {
 document.getElementById('btn-ai-profile').addEventListener('click', () => {
   runAI('btn-ai-profile', async () => {
     const result = await enhanceCharProfile(currentData);
-    const trimmed = result.substring(0, 250);
+    const trimmed = result;
     currentData.profile.intro = trimmed;
     document.getElementById('output-intro').value = trimmed;
     document.getElementById('count-intro').textContent = `${trimmed.length}字 / 250字`;
@@ -3154,13 +3155,13 @@ document.getElementById('btn-ai-ranking').addEventListener('click', () => {
     const titleMatch = result.match(/タイトル[：:](.+)/);
     const introMatch = result.match(/紹介文[：:]([\s\S]+)/);
     if (titleMatch) {
-      const newTitle = titleMatch[1].trim().substring(0, 30);
+      const newTitle = titleMatch[1].trim();
       currentData.title = newTitle;
       currentData.rolls.title = newTitle;
       document.getElementById('result-title').textContent = `【${newTitle}】`;
     }
     if (introMatch) {
-      const newIntro = introMatch[1].trim().substring(0, 250);
+      const newIntro = introMatch[1].trim();
       currentData.profile.intro = newIntro;
       document.getElementById('output-intro').value = newIntro;
       document.getElementById('count-intro').textContent = `${newIntro.length}字 / 250字`;
