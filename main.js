@@ -176,19 +176,12 @@ function renderResult(data) {
     </div>
   `).join('');
 
-  // タブ1: プロフィール
-  document.getElementById('output-charname').textContent = data.profile.charName;
-  document.getElementById('count-charname').textContent = `${countChars(data.profile.charName)}字 / 30字`;
-  updateCountClass('count-charname', countChars(data.profile.charName), 30);
+  // タブ1: プロフィール（編集可能）
+  setEditable('output-charname', data.profile.charName, 30, 'count-charname', (v) => { data.profile.charName = v; });
+  setEditable('output-intro', data.profile.intro, 250, 'count-intro', (v) => { data.profile.intro = v; });
 
-  document.getElementById('output-intro').textContent = data.profile.intro;
-  document.getElementById('count-intro').textContent = `${countChars(data.profile.intro)}字 / 250字`;
-  updateCountClass('count-intro', countChars(data.profile.intro), 250);
-
-  // タブ2: キャラ設定
-  document.getElementById('output-prompt').textContent = data.charSetting.prompt;
-  document.getElementById('count-prompt').textContent = `${countChars(data.charSetting.prompt)}字 / 4000字`;
-  updateCountClass('count-prompt', countChars(data.charSetting.prompt), 4000);
+  // タブ2: キャラ設定（編集可能）
+  setEditable('output-prompt', data.charSetting.prompt, 4000, 'count-prompt', (v) => { data.charSetting.prompt = v; });
 
   // タブ3: 初期設定
   renderInitialSettings(data.initialSettings);
@@ -227,36 +220,28 @@ function renderInitialSettings(settings) {
     const content = document.createElement('div');
     content.className = `initial-content${i === 0 ? ' active' : ''}`;
     content.id = `initial-content-${i}`;
+    const fmId = `init-fm-${i}`, fmCntId = `init-fm-cnt-${i}`;
+    const lblId = `init-lbl-${i}`, lblCntId = `init-lbl-cnt-${i}`;
+    const infoId = `init-info-${i}`, infoCntId = `init-info-cnt-${i}`;
     content.innerHTML = `
       <div class="card">
-        <div class="card-header">
-          <h3>最初の一言</h3>
-          <span class="char-count ${countChars(s.firstMessage) > 500 ? 'warning' : ''}">${countChars(s.firstMessage)}字 / 500字</span>
-        </div>
-        <div class="card-body">
-          <p class="output-text">${escapeHtml(s.firstMessage)}</p>
-        </div>
+        <div class="card-header"><h3>最初の一言</h3><span class="char-count" id="${fmCntId}"></span></div>
+        <div class="card-body"><textarea class="output-textarea" id="${fmId}" rows="6"></textarea></div>
       </div>
       <div class="card">
-        <div class="card-header">
-          <h3>初期設定の名称</h3>
-          <span class="char-count ${countChars(s.label) > 12 ? 'warning' : ''}">${countChars(s.label)}字 / 12字</span>
-        </div>
-        <div class="card-body">
-          <p class="output-text">${escapeHtml(s.label)}</p>
-        </div>
+        <div class="card-header"><h3>初期設定の名称</h3><span class="char-count" id="${lblCntId}"></span></div>
+        <div class="card-body"><textarea class="output-textarea output-textarea-sm" id="${lblId}" rows="1"></textarea></div>
       </div>
       <div class="card">
-        <div class="card-header">
-          <h3>初期設定の情報</h3>
-          <span class="char-count ${countChars(s.info) > 1000 ? 'warning' : ''}">${countChars(s.info)}字 / 1000字</span>
-        </div>
-        <div class="card-body">
-          <pre class="output-pre">${escapeHtml(s.info)}</pre>
-        </div>
+        <div class="card-header"><h3>初期設定の情報</h3><span class="char-count" id="${infoCntId}"></span></div>
+        <div class="card-body"><textarea class="output-textarea" id="${infoId}" rows="8"></textarea></div>
       </div>
     `;
     contentsEl.appendChild(content);
+    // 編集可能フィールドの初期化
+    setEditable(fmId, s.firstMessage, 500, fmCntId, (v) => { currentData.initialSettings[i].firstMessage = v; });
+    setEditable(lblId, s.label, 12, lblCntId, (v) => { currentData.initialSettings[i].label = v; });
+    setEditable(infoId, s.info, 1000, infoCntId, (v) => { currentData.initialSettings[i].info = v; });
   });
 }
 
@@ -282,11 +267,15 @@ function renderKeywordBook(books) {
         <div class="kw-keywords">
           ${kw.keywords.map(k => `<span class="kw-tag">${escapeHtml(k)}</span>`).join('')}
         </div>
-        <div class="kw-info">${escapeHtml(kw.info)}</div>
-        <div class="kw-char-count">${countChars(kw.info)}字 / 400字</div>
+        <textarea class="output-textarea kw-textarea" id="kw-info-${i}" rows="5"></textarea>
+        <div class="kw-char-count" id="kw-cnt-${i}"></div>
       </div>
     </div>
   `).join('');
+  // 各KWのテキストエリアを初期化
+  books.forEach((kw, i) => {
+    setEditable(`kw-info-${i}`, kw.info, 400, `kw-cnt-${i}`, (v) => { currentData.keywordBook[i].info = v; });
+  });
 }
 
 // ── バリデーション ──
@@ -330,6 +319,27 @@ function detectCategory(data) {
   if (genre.includes('サバイバル')) return 'サバイバル';
   if (genre.includes('ゲーム')) return 'ゲーム';
   return '恋愛';
+}
+
+// ── 編集可能テキストエリア初期化 ──
+function setEditable(elId, value, limit, countId, onChange) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.value = value;
+  updateCount(countId, value.length, limit);
+  el.addEventListener('input', () => {
+    const v = el.value;
+    onChange(v);
+    updateCount(countId, v.length, limit);
+    renderValidation(currentData);
+  });
+}
+
+function updateCount(countId, count, limit) {
+  const el = document.getElementById(countId);
+  if (!el) return;
+  el.textContent = `${count}字 / ${limit}字`;
+  if (count > limit) { el.classList.add('warning'); } else { el.classList.remove('warning'); }
 }
 
 // ── ユーティリティ ──

@@ -513,6 +513,33 @@ body {
   word-break: break-all;
 }
 
+.output-textarea {
+  width: 100%;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  font-family: var(--font-sans);
+  background: rgba(0,0,0,0.2);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  resize: vertical;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.output-textarea:focus {
+  outline: none;
+  border-color: var(--accent-1);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+}
+
+.output-textarea-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  resize: none;
+}
+
 .output-pre {
   color: var(--text-primary);
   font-size: 0.82rem;
