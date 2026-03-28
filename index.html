@@ -2376,7 +2376,7 @@ async function callGemini(systemPrompt, userPrompt) {
     },
     generationConfig: {
       temperature: 0.9,
-      maxOutputTokens: 4096,
+      maxOutputTokens: 8192,
     }
   };
 
@@ -2408,7 +2408,8 @@ async function enhancePrompt(data) {
   const sys = `あなたはGemini Gem「キャラぷ」のプロンプト設計の専門家です。
 ダイスロールで生成された下書きプロンプトを、プロフェッショナル品質に推敲してください。
 ルール：
-- 出力は4000字以内に厳守（なるべく情報を詳述し上限いっぱいのボリュームにすること）
+- 日本語で3000字〜最大4000字程度まで情報を詳述し、大幅に拡張すること
+- 文章が途中で切れないよう、必ず末尾まで完結させること
 - {{user}}表記を維持
 - 【】セクション構造を維持
 - 好感度・執着度の内部管理システムを維持

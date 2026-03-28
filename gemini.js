@@ -60,7 +60,7 @@ async function callGemini(systemPrompt, userPrompt) {
     },
     generationConfig: {
       temperature: 0.9,
-      maxOutputTokens: 4096,
+      maxOutputTokens: 8192,
     }
   };
 
