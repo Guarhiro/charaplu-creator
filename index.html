@@ -1079,16 +1079,22 @@ body {
   <!-- API Key Modal -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
-      <h3>⚙️ Gemini API 設定</h3>
+      <h3>⚙️ AIプロバイダー設定</h3>
       <div class="modal-input-group">
-        <label for="api-key-input">APIキー</label>
-        <input type="password" class="modal-input" id="api-key-input" placeholder="AIza...">
+        <label for="api-key-input">Gemini APIキー</label>
+        <input type="password" class="modal-input" id="api-key-input" placeholder="AIza..." style="margin-bottom: 0.5rem;">
+        <p class="modal-hint" style="margin-top: 0; margin-bottom: 0.5rem;">💡 <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent-2);">Google AI Studio</a> で無料取得</p>
+      </div>
+      <div class="modal-input-group">
+        <label for="anthropic-key-input">Anthropic APIキー（Claude用）</label>
+        <input type="password" class="modal-input" id="anthropic-key-input" placeholder="sk-ant-...">
+        <p class="modal-hint" style="margin-top: 0;">💡 <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--accent-2);">Anthropic Console</a> で取得</p>
       </div>
       <div class="modal-input-group">
         <label for="model-select">モデル選択</label>
         <select class="modal-select" id="model-select"></select>
       </div>
-      <p class="modal-hint">💡 Google AI Studio (<a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent-2);">aistudio.google.com</a>) で無料取得できます。<br>🔒 キーはブラウザのローカルストレージにのみ保存されます。<br>🤖 モデルが利用不可の場合は別のモデルに切り替えてください。</p>
+      <p class="modal-hint">🔒 キーはブラウザのローカルストレージにのみ保存されます。<br>🤖 選択したモデルに対応するAPIキーが必要です。</p>
       <div class="modal-actions">
         <button class="modal-btn modal-btn-danger" id="btn-key-delete">削除</button>
         <button class="modal-btn modal-btn-ghost" id="btn-key-cancel">キャンセル</button>
@@ -2405,6 +2411,99 @@ async function callGemini(systemPrompt, userPrompt) {
   return text;
 }
 
+// anthropic.js — Anthropic(Claude) API クライアント
+
+const ANTHROPIC_STORAGE_KEY = 'charaplu_anthropic_api_key';
+
+function getAnthropicApiKey() {
+  return localStorage.getItem(ANTHROPIC_STORAGE_KEY) || '';
+}
+
+function setAnthropicApiKey(key) {
+  if (key) {
+    localStorage.setItem(ANTHROPIC_STORAGE_KEY, key.trim());
+  } else {
+    localStorage.removeItem(ANTHROPIC_STORAGE_KEY);
+  }
+}
+
+function hasAnthropicApiKey() {
+  return !!getAnthropicApiKey();
+}
+
+async function callAnthropic(systemPrompt, userPrompt, modelValue) {
+  const apiKey = getAnthropicApiKey();
+  if (!apiKey) {
+    throw new Error('Anthropic APIキーが設定されていません。⚙️ボタンから設定してください。');
+  }
+
+  const url = 'https://api.anthropic.com/v1/messages';
+
+  const body = {
+    model: modelValue,
+    max_tokens: 8192,
+    system: systemPrompt,
+    messages: [
+      { role: 'user', content: userPrompt }
+    ]
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    const msg = err?.error?.message || `Anthropic API Error: ${response.status}`;
+    if (response.status === 400) throw new Error('APIリクエストが不正です。APIキーが無効か、モデルが存在しません。: ' + msg);
+    if (response.status === 401 || response.status === 403) throw new Error('Anthropic APIキーが無効です。設定を確認してください。');
+    if (response.status === 429) throw new Error('Anthropic API利用制限に達しました。時間をおいて再試行してください。');
+    throw new Error(msg);
+  }
+
+  const data = await response.json();
+  const text = data?.content?.[0]?.text;
+  if (!text) throw new Error('AIからの応答が空でした。もう一度お試しください。');
+  return text;
+}
+
+// api.js — 統合APIルーター (Gemini & Anthropic)
+
+const ANTHROPIC_MODELS = [
+  { id: 'claude-4.6-opus-latest', name: 'Claude 4.6 Opus（最新・最高精度）' },
+  { id: 'claude-4.6-sonnet-latest', name: 'Claude 4.6 Sonnet（推奨・高性能）' },
+  { id: 'claude-4.5-haiku-latest', name: 'Claude 4.5 Haiku（高速・低コスト）' }
+];
+
+const ALL_MODELS_DATA = {
+  gemini: AVAILABLE_MODELS, // gemini.jsで定義済み
+  anthropic: ANTHROPIC_MODELS
+};
+
+// 結合したモデル一覧を返すユーティリティ
+function getAllModels() {
+  return [...ALL_MODELS_DATA.gemini, ...ALL_MODELS_DATA.anthropic];
+}
+
+async function callAI(systemPrompt, userPrompt) {
+  const modelId = getModel(); // gemini.jsで定義されている現在の選択モデル取得関数を利用
+
+  // モデルIDのプレフィックスでAPIを振り分け
+  if (modelId.startsWith('claude')) {
+    return await callAnthropic(systemPrompt, userPrompt, modelId);
+  } else {
+    // デフォルト・Gemini
+    return await callGemini(systemPrompt, userPrompt);
+  }
+}
+
 // ai-enhance.js — AI強化ロジック（5機能）
 
 // ── 1. プロンプト推敲 ──
@@ -2446,7 +2545,7 @@ MBTI：${data.rolls.mbti}
 【下書きプロンプト】
 ${data.charSetting.prompt}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 2. キーワードブック拡張 ──
@@ -2475,7 +2574,7 @@ async function enhanceKeywordBook(data, kwIndex) {
 【現在の情報】
 ${kw.info}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 3. 最初の一言強化 ──
@@ -2510,7 +2609,7 @@ async function enhanceFirstMessage(data, settingIndex) {
 【現在の最初の一言】
 ${setting.firstMessage}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 4. キャラ深掘り ──
@@ -2543,7 +2642,7 @@ MBTI：${data.rolls.mbti}
 【現在の紹介文】
 ${data.profile.intro}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 5. ランキング最適化 ──
@@ -2577,7 +2676,7 @@ async function optimizeForRanking(data) {
 【現在の紹介文】
 ${data.profile.intro}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 6. 立ち絵画像生成プロンプト ──
@@ -2640,7 +2739,7 @@ MBTI：${data.rolls.mbti}
 【ストーリー背景】
 ${data.rolls.story.join(' → ')}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // main.js — UI オーケストレーション
@@ -3013,45 +3112,80 @@ function updateCountClass(id, count, limit) {
 // ── Modal ──
 const modalOverlay = document.getElementById('modal-overlay');
 const apiKeyInput = document.getElementById('api-key-input');
+const anthropicKeyInput = document.getElementById('anthropic-key-input');
 const keyStatusDot = document.getElementById('key-status');
+const modelSelect = document.getElementById('model-select');
+
+function hasKeyForCurrentModel() {
+  const model = getModel();
+  if (model.startsWith('claude')) return hasAnthropicApiKey();
+  return hasApiKey();
+}
 
 function updateKeyStatus() {
-  const has = hasApiKey();
+  const has = hasKeyForCurrentModel();
   keyStatusDot.classList.toggle('active', has);
   document.querySelectorAll('.btn-ai').forEach(b => b.disabled = !has || !currentData);
 }
 updateKeyStatus();
 
 // ── Model Selector ──
-const modelSelect = document.getElementById('model-select');
 function populateModels() {
   modelSelect.innerHTML = '';
-  AVAILABLE_MODELS.forEach(m => {
+  
+  const optgroupGemini = document.createElement('optgroup');
+  optgroupGemini.label = 'Google Gemini';
+  ALL_MODELS_DATA.gemini.forEach(m => {
     const opt = document.createElement('option');
-    opt.value = m.id;
-    opt.textContent = m.name;
-    modelSelect.appendChild(opt);
+    opt.value = m.id; opt.textContent = m.name;
+    optgroupGemini.appendChild(opt);
   });
+  modelSelect.appendChild(optgroupGemini);
+  
+  const optgroupAnthropic = document.createElement('optgroup');
+  optgroupAnthropic.label = 'Anthropic Claude';
+  ALL_MODELS_DATA.anthropic.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id; opt.textContent = m.name;
+    optgroupAnthropic.appendChild(opt);
+  });
+  modelSelect.appendChild(optgroupAnthropic);
+  
   modelSelect.value = getModel();
 }
 populateModels();
 
+// Update status on model change without saving (preview)
+modelSelect.addEventListener('change', () => {
+  // If we changed dropdown in modal, reflect visually but don't save yet
+});
+
 document.getElementById('btn-settings').addEventListener('click', () => {
   apiKeyInput.value = getApiKey();
+  anthropicKeyInput.value = getAnthropicApiKey();
   modelSelect.value = getModel();
   modalOverlay.classList.add('show');
 });
 document.getElementById('btn-key-save').addEventListener('click', () => {
   setApiKey(apiKeyInput.value);
+  setAnthropicApiKey(anthropicKeyInput.value);
   setModel(modelSelect.value);
   modalOverlay.classList.remove('show');
   updateKeyStatus();
-  const modelName = AVAILABLE_MODELS.find(m => m.id === getModel())?.name || getModel();
-  showToast(hasApiKey() ? `保存完了 ✓ モデル: ${modelName}` : 'APIキーが空です', hasApiKey() ? 'success' : 'error');
+  const allModels = getAllModels();
+  const modelName = allModels.find(m => m.id === getModel())?.name || getModel();
+  
+  if (hasKeyForCurrentModel()) {
+    showToast(`保存完了 ✓ モデル: ${modelName}`, 'success');
+  } else {
+    showToast(`選択したモデル(${modelName})のAPIキーが空です`, 'error');
+  }
 });
 document.getElementById('btn-key-delete').addEventListener('click', () => {
   setApiKey('');
+  setAnthropicApiKey('');
   apiKeyInput.value = '';
+  anthropicKeyInput.value = '';
   modalOverlay.classList.remove('show');
   updateKeyStatus();
   showToast('APIキーを削除しました', 'info');

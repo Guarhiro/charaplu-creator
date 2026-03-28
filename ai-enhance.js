@@ -39,7 +39,7 @@ MBTI：${data.rolls.mbti}
 【下書きプロンプト】
 ${data.charSetting.prompt}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 2. キーワードブック拡張 ──
@@ -68,7 +68,7 @@ async function enhanceKeywordBook(data, kwIndex) {
 【現在の情報】
 ${kw.info}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 3. 最初の一言強化 ──
@@ -103,7 +103,7 @@ async function enhanceFirstMessage(data, settingIndex) {
 【現在の最初の一言】
 ${setting.firstMessage}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 4. キャラ深掘り ──
@@ -136,7 +136,7 @@ MBTI：${data.rolls.mbti}
 【現在の紹介文】
 ${data.profile.intro}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 5. ランキング最適化 ──
@@ -170,7 +170,7 @@ async function optimizeForRanking(data) {
 【現在の紹介文】
 ${data.profile.intro}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
 
 // ── 6. 立ち絵画像生成プロンプト ──
@@ -233,5 +233,5 @@ MBTI：${data.rolls.mbti}
 【ストーリー背景】
 ${data.rolls.story.join(' → ')}`;
 
-  return await callGemini(sys, user);
+  return await callAI(sys, user);
 }
