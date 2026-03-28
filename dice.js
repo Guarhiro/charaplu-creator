@@ -1,19 +1,19 @@
-// dice.js — 16面ダイスエンジン
+// dice.js — D16 / D64 ダイスエンジン
 
 export function rollD16() {
-  return Math.floor(Math.random() * 16) + 1;
+  return Math.floor(Math.random() * 16);
 }
 
-export function rollMultiple(n) {
-  return Array.from({ length: n }, () => rollD16());
+export function rollD64() {
+  return Math.floor(Math.random() * 64);
 }
 
-// 1-16 を 1-9 に変換（エニアグラム用）
+// エニアグラム用（1〜9）
 export function rollD9() {
-  return ((rollD16() - 1) % 9) + 1;
+  return Math.floor(Math.random() * 9);
 }
 
-// 1-16 を 0-100 にマッピング
+// ステータス（好感度・執着度）用 → 0〜100のパーセント
 export function rollPercent() {
-  return Math.round(((rollD16() - 1) / 15) * 100);
+  return Math.floor(Math.random() * 101);
 }

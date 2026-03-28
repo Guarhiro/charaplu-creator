@@ -1,11 +1,12 @@
 // generator.js — プロンプト自動生成ロジック
-import { rollD16, rollMultiple, rollD9, rollPercent } from './dice.js';
+import { rollD16, rollD64, rollD9, rollPercent } from './dice.js';
 import { TABLES } from './tables.js';
 
 function pick(table) {
-  const idx = rollD16() - 1;
-  const items = TABLES[table].items;
-  return items[idx % items.length];
+  const t = TABLES[table];
+  const dice = t.dice || 16;
+  const idx = (dice === 64 ? rollD64() : dice === 9 ? rollD9() : rollD16());
+  return t.items[idx % t.items.length];
 }
 
 function pickFromArray(arr) {
