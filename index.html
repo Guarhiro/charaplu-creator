@@ -1,0 +1,2840 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="フルオートAIキャラチャットプロンプトクリエイター - 16面ダイスで完全自動生成">
+  <title>キャラぷクリエイター | AI Prompt Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+/* ═══════════════════════════════════════════
+   キャラぷクリエイター — Premium Dark Theme
+   ═══════════════════════════════════════════ */
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: rgba(22, 22, 35, 0.8);
+  --bg-card-hover: rgba(30, 30, 48, 0.9);
+  --bg-glass: rgba(255, 255, 255, 0.03);
+
+  --text-primary: #e8e8f0;
+  --text-secondary: #9898b0;
+  --text-muted: #5a5a78;
+
+  --accent-1: #a855f7;        /* Purple */
+  --accent-2: #06b6d4;        /* Cyan */
+  --accent-3: #f43f5e;        /* Rose */
+  --accent-4: #10b981;        /* Emerald */
+  --accent-glow: rgba(168, 85, 247, 0.3);
+
+  --gradient-primary: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+  --gradient-warm: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%);
+  --gradient-cool: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
+  --gradient-dark: linear-gradient(180deg, #0a0a0f 0%, #12121a 100%);
+
+  --border: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(168, 85, 247, 0.3);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 40px rgba(168, 85, 247, 0.15);
+
+  --font-sans: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(6, 182, 212, 0.06) 0%, transparent 50%);
+}
+
+/* ── Header ── */
+.header {
+  position: relative;
+  padding: 3rem 2rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(168, 85, 247, 0.05) 0%, transparent 100%);
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.5));
+  animation: float 3s ease-in-out infinite;
+}
+
+.logo h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+/* ── Main ── */
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* ── Dice Section ── */
+.dice-section {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.dice-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.dice-visual {
+  width: 140px;
+  height: 140px;
+  perspective: 600px;
+  margin-bottom: 1rem;
+}
+
+.dice-face {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-glow), var(--shadow-md);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.dice-face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-primary);
+  opacity: 0.1;
+  border-radius: inherit;
+}
+
+.dice-face:hover {
+  transform: rotateY(15deg) rotateX(-10deg);
+  box-shadow: 0 0 60px rgba(168, 85, 247, 0.3), var(--shadow-lg);
+}
+
+.dice-number {
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  z-index: 1;
+}
+
+.dice-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dice-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+/* ── Roll Button ── */
+.btn-roll {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 3rem;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  color: white;
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 24px rgba(168, 85, 247, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-roll::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.btn-roll:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 40px rgba(168, 85, 247, 0.5);
+}
+
+.btn-roll:hover::before {
+  opacity: 1;
+}
+
+.btn-roll:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-roll:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-roll-icon {
+  font-size: 1.5rem;
+  animation: none;
+}
+
+.btn-roll:not(:disabled):hover .btn-roll-icon {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* ── Roll Progress ── */
+.roll-progress {
+  padding: 2rem 0;
+}
+
+.roll-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.roll-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+.roll-item .roll-category {
+  color: var(--accent-2);
+  font-weight: 600;
+  min-width: 140px;
+}
+
+.roll-item .roll-dice {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  min-width: 30px;
+  text-align: center;
+}
+
+.roll-item .roll-result {
+  color: var(--text-primary);
+}
+
+/* ── Result Section ── */
+.result-section {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.result-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.result-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: var(--gradient-warm);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.result-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-reroll, .btn-download {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  backdrop-filter: blur(8px);
+}
+
+.btn-reroll:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: var(--accent-1);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+.btn-download {
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.btn-download:hover {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: var(--accent-2);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+/* ── Rolls Summary ── */
+.rolls-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.roll-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  transition: all var(--transition-fast);
+}
+
+.roll-badge:hover {
+  border-color: var(--border-accent);
+  background: rgba(168, 85, 247, 0.05);
+}
+
+.roll-badge-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.roll-badge-value {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab {
+  flex: 1;
+  min-width: max-content;
+  padding: 0.65rem 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-secondary);
+  background: var(--bg-glass);
+}
+
+.tab.active {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 2px 12px rgba(168, 85, 247, 0.3);
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: all var(--transition-base);
+  backdrop-filter: blur(8px);
+}
+
+.card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-glass);
+}
+
+.card-header h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.char-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-4);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.char-count.warning {
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--accent-3);
+  border-color: rgba(244, 63, 94, 0.2);
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.output-text {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.output-pre {
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: var(--font-sans);
+  background: rgba(0,0,0,0.2);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Initial Settings Sub-tabs ── */
+.initial-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.initial-tab-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.initial-tab-btn:hover {
+  border-color: var(--accent-1);
+  color: var(--text-primary);
+}
+
+.initial-tab-btn.active {
+  background: var(--gradient-warm);
+  color: white;
+  border-color: transparent;
+}
+
+.initial-content {
+  display: none;
+}
+
+.initial-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ── Keyword Book Grid ── */
+.kw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.kw-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.kw-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.kw-card-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-glass);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kw-card-header h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.kw-number {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.kw-card-body {
+  padding: 0.75rem 1rem;
+}
+
+.kw-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.kw-tag {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--accent-2);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  font-weight: 500;
+}
+
+.kw-info {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  max-height: 120px;
+  overflow-y: auto;
+  transition: max-height var(--transition-slow);
+}
+
+.kw-card:hover .kw-info {
+  max-height: 400px;
+}
+
+.kw-char-count {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 0.5rem;
+}
+
+/* ── Empty State ── */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+/* ── Register ── */
+.register-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.register-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-glass);
+}
+
+.register-label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--accent-2);
+  min-width: 100px;
+}
+
+.register-value {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ── Validation ── */
+.validation-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.validation-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.validation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.5rem;
+}
+
+.validation-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+}
+
+.validation-item.ok {
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.validation-item.error {
+  border-color: rgba(244, 63, 94, 0.3);
+  background: rgba(244, 63, 94, 0.05);
+}
+
+.validation-field {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.validation-count {
+  font-weight: 700;
+}
+
+.validation-count.ok {
+  color: var(--accent-4);
+}
+
+.validation-count.error {
+  color: var(--accent-3);
+}
+
+/* ── Section Title ── */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ═══ Animations ═══ */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes diceRoll {
+  0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+  25% { transform: rotateX(90deg) rotateY(180deg) rotateZ(90deg); }
+  50% { transform: rotateX(180deg) rotateY(360deg) rotateZ(180deg); }
+  75% { transform: rotateX(270deg) rotateY(540deg) rotateZ(90deg); }
+  100% { transform: rotateX(360deg) rotateY(720deg) rotateZ(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.4); }
+}
+
+.dice-rolling .dice-face {
+  animation: diceRoll 0.6s ease-in-out;
+}
+
+.dice-face.pulse {
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+/* ═══ Responsive ═══ */
+@media (max-width: 768px) {
+  .header {
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .logo h1 {
+    font-size: 1.5rem;
+  }
+
+  .main {
+    padding: 1rem 1rem 3rem;
+  }
+
+  .dice-visual {
+    width: 100px;
+    height: 100px;
+  }
+
+  .dice-number {
+    font-size: 2.5rem;
+  }
+
+  .dice-title {
+    font-size: 1.2rem;
+  }
+
+  .btn-roll {
+    padding: 0.85rem 2rem;
+    font-size: 1rem;
+  }
+
+  .tabs {
+    gap: 0;
+    padding: 0.25rem;
+  }
+
+  .tab {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.7rem;
+  }
+
+  .result-title {
+    font-size: 1.3rem;
+  }
+
+  .kw-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rolls-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .validation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .rolls-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .result-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-reroll, .btn-download {
+    justify-content: center;
+  }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ═══ AI Enhancement Styles ═══ */
+.header-actions { display: flex; align-items: center; gap: 0.75rem; justify-content: center; margin-top: 0.75rem; }
+.btn-settings {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 1rem; border: 1px solid var(--border-accent); border-radius: var(--radius-full);
+  background: var(--bg-card); color: var(--text-secondary); font-family: var(--font-sans);
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all var(--transition-base);
+}
+.btn-settings:hover { background: rgba(168,85,247,0.15); color: var(--text-primary); border-color: var(--accent-1); }
+.btn-settings .key-status { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-3); flex-shrink: 0; }
+.btn-settings .key-status.active { background: var(--accent-4); box-shadow: 0 0 8px rgba(16,185,129,0.5); }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center; z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--bg-secondary); border: 1px solid var(--border-accent);
+  border-radius: var(--radius-xl); padding: 2rem; max-width: 480px; width: 90%;
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+.modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.modal-input-group { margin-bottom: 1rem; }
+.modal-input-group label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem; font-weight: 600; }
+.modal-input, .modal-select {
+  width: 100%; padding: 0.65rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-sans); font-size: 0.85rem;
+  transition: border-color var(--transition-fast);
+}
+.modal-input:focus, .modal-select:focus { outline: none; border-color: var(--accent-1); box-shadow: 0 0 12px rgba(168,85,247,0.2); }
+.modal-input::placeholder { color: var(--text-muted); }
+.modal-select option { background: var(--bg-secondary); color: var(--text-primary); }
+.modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+.modal-btn {
+  flex: 1; padding: 0.6rem 1rem; border: none; border-radius: var(--radius-md);
+  font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  transition: all var(--transition-base);
+}
+.modal-btn-primary { background: var(--gradient-primary); color: white; }
+.modal-btn-primary:hover { box-shadow: 0 4px 20px rgba(168,85,247,0.4); transform: translateY(-1px); }
+.modal-btn-danger { background: rgba(244,63,94,0.15); color: var(--accent-3); border: 1px solid rgba(244,63,94,0.3); }
+.modal-btn-danger:hover { background: rgba(244,63,94,0.25); }
+.modal-btn-ghost { background: var(--bg-glass); color: var(--text-secondary); border: 1px solid var(--border); }
+.modal-btn-ghost:hover { background: var(--bg-card); color: var(--text-primary); }
+.modal-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.5; }
+
+/* AI Enhance Buttons */
+.btn-ai {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.5rem 1rem; border: 1px solid rgba(168,85,247,0.3); border-radius: var(--radius-full);
+  background: linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(6,182,212,0.1) 100%);
+  color: var(--accent-1); font-family: var(--font-sans); font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition-base); white-space: nowrap;
+}
+.btn-ai:hover { background: linear-gradient(135deg, rgba(168,85,247,0.2) 0%, rgba(6,182,212,0.2) 100%); border-color: var(--accent-1); box-shadow: 0 0 16px rgba(168,85,247,0.2); transform: translateY(-1px); }
+.btn-ai:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-ai.loading .ai-icon { animation: spin 1s linear infinite; }
+
+.ai-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.ai-actions-inline { display: inline-flex; margin-left: 0.5rem; }
+
+/* Image Prompt Result Modal */
+.img-prompt-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center; z-index: 1100;
+}
+.img-prompt-overlay.show { display: flex; }
+.img-prompt-modal {
+  background: var(--bg-secondary); border: 1px solid var(--border-accent);
+  border-radius: var(--radius-xl); padding: 2rem; max-width: 700px; width: 92%; max-height: 85vh;
+  overflow-y: auto; box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+.img-prompt-modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.img-prompt-section { margin-bottom: 1.25rem; }
+.img-prompt-section h4 { font-size: 0.85rem; color: var(--accent-2); margin-bottom: 0.4rem; font-weight: 700; }
+.img-prompt-text {
+  width: 100%; min-height: 80px; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-mono, 'Courier New', monospace); font-size: 0.8rem;
+  line-height: 1.6; resize: vertical; white-space: pre-wrap;
+}
+.img-prompt-actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+.btn-copy-prompt {
+  flex: 1; padding: 0.55rem 1rem; border: 1px solid var(--border-accent); border-radius: var(--radius-md);
+  background: var(--bg-glass); color: var(--text-primary); font-family: var(--font-sans); font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition-base);
+}
+.btn-copy-prompt:hover { background: rgba(168,85,247,0.15); border-color: var(--accent-1); }
+.btn-copy-prompt:active { transform: scale(0.97); }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Toast */
+.toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 2000; display: flex; flex-direction: column; gap: 0.5rem; }
+.toast {
+  padding: 0.75rem 1.25rem; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 500;
+  backdrop-filter: blur(12px); animation: slideInRight 0.3s ease-out; max-width: 360px;
+  border: 1px solid var(--border);
+}
+.toast-success { background: rgba(16,185,129,0.15); color: var(--accent-4); border-color: rgba(16,185,129,0.3); }
+.toast-error { background: rgba(244,63,94,0.15); color: var(--accent-3); border-color: rgba(244,63,94,0.3); }
+.toast-info { background: rgba(168,85,247,0.15); color: var(--accent-1); border-color: rgba(168,85,247,0.3); }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+.ai-badge {
+  display: inline-block; font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: var(--radius-full);
+  background: var(--gradient-primary); color: white; font-weight: 700; margin-left: 0.5rem; vertical-align: middle;
+}
+  </style>
+</head>
+<body>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- API Key Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h3>⚙️ Gemini API 設定</h3>
+      <div class="modal-input-group">
+        <label for="api-key-input">APIキー</label>
+        <input type="password" class="modal-input" id="api-key-input" placeholder="AIza...">
+      </div>
+      <div class="modal-input-group">
+        <label for="model-select">モデル選択</label>
+        <select class="modal-select" id="model-select"></select>
+      </div>
+      <p class="modal-hint">💡 Google AI Studio (<a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent-2);">aistudio.google.com</a>) で無料取得できます。<br>🔒 キーはブラウザのローカルストレージにのみ保存されます。<br>🤖 モデルが利用不可の場合は別のモデルに切り替えてください。</p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-danger" id="btn-key-delete">削除</button>
+        <button class="modal-btn modal-btn-ghost" id="btn-key-cancel">キャンセル</button>
+        <button class="modal-btn modal-btn-primary" id="btn-key-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon">🎲</span>
+        <h1>キャラぷクリエイター</h1>
+      </div>
+      <p class="subtitle">フルオートAIキャラチャットプロンプトジェネレーター</p>
+      <div class="header-actions">
+        <button class="btn-settings" id="btn-settings">
+          <span class="key-status" id="key-status"></span>
+          <span>⚙️ APIキー設定</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="dice-section" id="dice-section">
+      <div class="dice-container">
+        <div class="dice-visual" id="dice-visual">
+          <div class="dice-face" id="dice-face"><span class="dice-number">?</span></div>
+        </div>
+        <h2 class="dice-title">16面ダイスで運命を決めよう</h2>
+        <p class="dice-desc">ボタンを押すと全カテゴリのダイスが自動的に振られ、<br>キャラぷ用プロンプトが完全自動生成されます</p>
+        <button class="btn-roll" id="btn-roll"><span class="btn-roll-icon">🎲</span><span>ダイスを振る！</span></button>
+      </div>
+    </section>
+    <section class="roll-progress" id="roll-progress" style="display:none;">
+      <h2 class="section-title">ダイスロール中...</h2>
+      <div class="roll-log" id="roll-log"></div>
+    </section>
+    <section class="result-section" id="result-section" style="display:none;">
+      <div class="result-header">
+        <h2 class="result-title" id="result-title"></h2>
+        <div class="result-actions">
+          <button class="btn-reroll" id="btn-reroll"><span>🎲</span> もう一度振る</button>
+          <button class="btn-download" id="btn-download"><span>📥</span> Markdownダウンロード</button>
+        </div>
+      </div>
+      <div class="rolls-summary" id="rolls-summary"></div>
+
+      <!-- AI強化ボタンエリア -->
+      <div class="ai-actions" id="ai-actions">
+        <button class="btn-ai" id="btn-ai-prompt" disabled><span class="ai-icon">✨</span> プロンプト推敲</button>
+        <button class="btn-ai" id="btn-ai-kw-all" disabled><span class="ai-icon">✨</span> KW全拡張</button>
+        <button class="btn-ai" id="btn-ai-firstmsg" disabled><span class="ai-icon">✨</span> 最初の一言強化</button>
+        <button class="btn-ai" id="btn-ai-profile" disabled><span class="ai-icon">✨</span> キャラ深掘り</button>
+        <button class="btn-ai" id="btn-ai-ranking" disabled><span class="ai-icon">✨</span> ランキング最適化</button>
+        <button class="btn-ai" id="btn-ai-imgprompt" disabled><span class="ai-icon">🎨</span> 立ち絵プロンプト生成</button>
+      </div>
+
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-tab="profile">プロフィール</button>
+        <button class="tab" data-tab="char-setting">キャラ設定</button>
+        <button class="tab" data-tab="initial-setting">初期設定</button>
+        <button class="tab" data-tab="media">メディア</button>
+        <button class="tab" data-tab="keyword-book">キーワードブック</button>
+        <button class="tab" data-tab="register">登録</button>
+      </nav>
+      <div class="tab-contents">
+        <div class="tab-content active" id="tab-profile">
+          <div class="card"><div class="card-header"><h3>キャラ名</h3><span class="char-count" id="count-charname"></span></div><div class="card-body"><p class="output-text" id="output-charname"></p></div></div>
+          <div class="card"><div class="card-header"><h3>キャラ紹介文</h3><span class="char-count" id="count-intro"></span></div><div class="card-body"><p class="output-text" id="output-intro"></p></div></div>
+        </div>
+        <div class="tab-content" id="tab-char-setting">
+          <div class="card"><div class="card-header"><h3>テンプレート</h3></div><div class="card-body"><p class="output-text">カスタム</p></div></div>
+          <div class="card"><div class="card-header"><h3>プロンプト</h3><span class="char-count" id="count-prompt"></span></div><div class="card-body"><pre class="output-pre" id="output-prompt"></pre></div></div>
+        </div>
+        <div class="tab-content" id="tab-initial-setting"><div class="initial-tabs" id="initial-tabs"></div><div id="initial-contents"></div></div>
+        <div class="tab-content" id="tab-media"><div class="card"><div class="card-body empty-state"><span class="empty-icon">🖼️</span><p>メディア欄はキャラぷ上で直接アップロードしてください。</p><p class="hint">サムネイル画像は5MB以下、1:1比率、png/jpg/jpeg/webp対応</p></div></div></div>
+        <div class="tab-content" id="tab-keyword-book"><div class="kw-grid" id="kw-grid"></div></div>
+        <div class="tab-content" id="tab-register"><div class="card"><div class="card-body"><div class="register-info"><div class="register-item"><span class="register-label">公開設定</span><span class="register-value">キャラぷ上で選択してください</span></div><div class="register-item"><span class="register-label">カテゴリ</span><span class="register-value" id="output-category">自動判定...</span></div></div></div></div></div>
+      </div>
+      <div class="validation-section" id="validation-section">
+        <h3 class="validation-title">📋 文字数チェック</h3>
+        <div class="validation-grid" id="validation-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Image Prompt Result Modal -->
+  <div class="img-prompt-overlay" id="img-prompt-overlay">
+    <div class="img-prompt-modal">
+      <h3>🎨 立ち絵画像生成プロンプト</h3>
+      <div id="img-prompt-content"></div>
+      <div class="img-prompt-actions">
+        <button class="btn-copy-prompt" id="btn-copy-all-prompts">📋 全てコピー</button>
+        <button class="modal-btn modal-btn-ghost" id="btn-close-imgprompt">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><p>キャラぷクリエイター — Gemini Gem用プロンプト自動生成ツール</p></footer>
+  <script>
+// dice.js — 16面ダイスエンジン
+
+function rollD16() {
+  return Math.floor(Math.random() * 16) + 1;
+}
+
+function rollMultiple(n) {
+  return Array.from({ length: n }, () => rollD16());
+}
+
+// 1-16 を 1-9 に変換（エニアグラム用）
+function rollD9() {
+  return ((rollD16() - 1) % 9) + 1;
+}
+
+// 1-16 を 0-100 にマッピング
+function rollPercent() {
+  return Math.round(((rollD16() - 1) / 15) * 100);
+}
+
+// tables.js — D16要素マッピングテーブル
+
+const TABLES = {
+
+  // ── 世界観 ──
+  cultureLevel: {
+    name: '文化レベル',
+    items: [
+      '現代日本', '近未来（2050年代）', 'サイバーパンク', '中世ヨーロッパ風',
+      '古代神話時代', 'ポストアポカリプス', 'スチームパンク', '大正浪漫',
+      '昭和レトロ', '江戸時代風', 'ハイファンタジー', 'ローファンタジー',
+      '宇宙開拓時代', 'ディストピア', 'ユートピア崩壊後', '異世界転生先'
+    ]
+  },
+
+  location: {
+    name: '舞台・ロケーション',
+    items: [
+      '全寮制学園', '都心タワーマンション', '異世界の王都', '宇宙ステーション',
+      '地下シェルター', '離島の洋館', '田舎の古民家', '豪華客船',
+      '廃墟都市', '城下町', '魔法学院', '軍事基地',
+      '芸能事務所', 'ゲーム世界（VRMMO）', '監獄塔', '神殿遺跡'
+    ]
+  },
+
+  genre: {
+    name: 'ジャンル・テーマ',
+    items: [
+      '純愛ロマンス', 'ダーク・サスペンス', 'ホラー・スリラー', 'ラブコメディ',
+      '執着・束縛系', 'ミステリー・推理', '逆ハーレム', 'サバイバル',
+      '主従・忠誠', '禁断の関係', '復讐劇', '共依存',
+      'すれ違い・切ない系', 'ゲーム攻略', '日常・癒し', '狂気・ヤンデレ'
+    ]
+  },
+
+  // ── キャラ基本 ──
+  charAge: {
+    name: 'キャラ年齢帯',
+    items: [
+      '16歳（高校1年）', '17歳（高校2年）', '18歳（高校3年）', '19歳（大学1年）',
+      '20歳', '21歳', '22歳（大学4年）', '23歳（新社会人）',
+      '25歳', '27歳', '30歳', '不老（外見20代）',
+      '???歳（人外）', '18歳（異世界年齢）', '200歳（吸血鬼）', '28歳'
+    ]
+  },
+
+  hairColor: {
+    name: '髪色',
+    items: [
+      '漆黒', 'ダークブラウン', '亜麻色', 'プラチナブロンド',
+      '銀髪', '白髪', '赤髪', 'ピンク',
+      '藍色', '翠緑', '紫', '橙',
+      'グラデーション（黒→赤）', 'メッシュ入り銀', '蒼白', '金髪'
+    ]
+  },
+
+  hairStyle: {
+    name: '髪型',
+    items: [
+      'ショート（無造作）', 'ミディアム（前髪長め）', 'ロングストレート', 'ポニーテール',
+      'ウルフカット', 'オールバック', 'センターパート', 'マッシュ',
+      '三つ編み', 'ツインテール', '姫カット', 'サイドテール',
+      'お団子', '短髪刈り上げ', 'アシメ', '巻き髪ロング'
+    ]
+  },
+
+  eyeColor: {
+    name: '瞳の色',
+    items: [
+      '深い黒', 'ダークブラウン', '琥珀', '金',
+      '翡翠グリーン', '氷のようなブルー', '紫', '赤（特殊）',
+      'ヘテロクロミア（金×青）', '銀灰', 'ラベンダー', 'ターコイズ',
+      'ヘテロクロミア（赤×金）', '深紅', '蜂蜜色', 'サファイア'
+    ]
+  },
+
+  // ── 性格 ──
+  mbti: {
+    name: 'MBTI',
+    items: [
+      'INTJ（建築家）', 'INTP（論理学者）', 'ENTJ（指揮官）', 'ENTP（討論者）',
+      'INFJ（提唱者）', 'INFP（仲介者）', 'ENFJ（主人公）', 'ENFP（広報運動家）',
+      'ISTJ（管理者）', 'ISFJ（擁護者）', 'ESTJ（幹部）', 'ESFJ（領事官）',
+      'ISTP（巨匠）', 'ISFP（冒険家）', 'ESTP（起業家）', 'ESFP（エンターテイナー）'
+    ]
+  },
+
+  enneagram: {
+    name: 'エニアグラム',
+    items: [
+      'タイプ1（改革する人）', 'タイプ2（助ける人）', 'タイプ3（達成する人）',
+      'タイプ4（個性的な人）', 'タイプ5（調べる人）', 'タイプ6（忠実な人）',
+      'タイプ7（熱中する人）', 'タイプ8（挑戦する人）', 'タイプ9（平和をもたらす人）'
+    ]
+  },
+
+  speechStyle: {
+    name: '口調・語尾',
+    items: [
+      '丁寧語（ですます調）', 'タメ口（〜だよ、〜じゃん）', '俺様系（〜だろ、〜してやる）',
+      'お嬢様（〜ですわ、〜ませんこと？）', '軍人調（〜であります）', 'ボクっ娘（〜なんだ、〜だよね）',
+      '方言混じり（〜やんけ、〜なんよ）', '無口・単語返し', '皮肉屋（〜とでも？、ふーん）',
+      '古風（〜じゃ、〜であるな）', '中二病（〜だと言うのか…！）', 'ギャル語（〜っしょ、マジで）',
+      '敬語崩れ（普段丁寧→感情で崩れる）', '囁き系（ねぇ…、〜してあげようか？）',
+      '毒舌ストレート', '天然ほわほわ（〜なの？えへへ）'
+    ]
+  },
+
+  charAttribute: {
+    name: 'キャラ属性',
+    items: [
+      'ヤンデレ', 'ツンデレ', 'クーデレ', '天然・癒し系',
+      'オレ様・俺様', 'ドS', 'ドM', '無表情・ミステリアス',
+      '執着・独占欲強め', '忠犬・一途', '小悪魔', '腹黒',
+      '母性／父性強め', '破滅型', 'ギャップ萌え', 'メンヘラ'
+    ]
+  },
+
+  fetish: {
+    name: 'フェチ・こだわり',
+    items: [
+      '匂いフェチ', '手フェチ', '声フェチ', 'うなじフェチ',
+      '耳フェチ', '鎖骨フェチ', '制服フェチ', 'ギャップフェチ',
+      '涙フェチ', '傷痕フェチ', '所有欲（マーキング）', '束縛具',
+      '温度差フェチ', '言葉責め', '甘やかしフェチ', '支配欲'
+    ]
+  },
+
+  // ── 関係性 ──
+  relationship: {
+    name: '関係性',
+    items: [
+      '幼馴染', '隣人', '同居人', '教師と生徒',
+      '上司と部下', '主人と従者', '仲の悪い同級生', '婚約者（政略）',
+      '元恋人', '監禁者と被監禁者', '兄弟姉妹（義理）', '推しとファン',
+      '医者と患者', '犯罪者と刑事', '神と信徒', '債権者と債務者'
+    ]
+  },
+
+  // ── ストーリー展開（5段階） ──
+  storyPhase1: {
+    name: '展開①：出会い',
+    items: [
+      '運命的な衝突', '偶然の再会', '強制的な同居開始', '夢の中で出会う',
+      '助けられる', '誤解から始まる', '契約関係の成立', 'SNSで繋がる',
+      '事故に巻き込まれる', '異世界に召喚される', '記憶喪失状態で目覚める', '拾われる',
+      '賭けに負けて', '脅迫される', '入学/入社初日に', '儀式の生贄として'
+    ]
+  },
+
+  storyPhase2: {
+    name: '展開②：接近',
+    items: [
+      '二人きりの共同作業', '秘密を共有する', '怪我の手当て', '雨宿り',
+      '酔った勢いで本音', '嫉妬が芽生える', '夜の密会', '互いの過去を知る',
+      '他の異性への対抗心', '守りたいと思う瞬間', '特別扱いに気づく', '閉じ込められる',
+      '夢と現実の境界が曖昧に', 'プレゼント交換', '寝顔を見てしまう', '約束を交わす'
+    ]
+  },
+
+  storyPhase3: {
+    name: '展開③：転換点',
+    items: [
+      '告白される', '裏切りが発覚', '第三者の介入', '過去のトラウマ露呈',
+      '本性を見せる', '別れを切り出される', '記憶操作が判明', '力が暴走する',
+      '敵対組織の襲撃', '真実を知ってしまう', '選択を迫られる', '身体の異変',
+      '時間制限が発覚', '信頼が崩壊する', '覚醒する', '消えかける'
+    ]
+  },
+
+  storyPhase4: {
+    name: '展開④：クライマックス',
+    items: [
+      '命がけの救出', '最終対決', '心中の決意', '世界の崩壊が始まる',
+      '犠牲を払う', '封印を解く', '真の姿を晒す', '永遠の別れを覚悟',
+      '全てを賭けた告白', '洗脳からの解放', '運命への反逆', '記憶を取り戻す',
+      '仲間の裏切りと和解', '最後の約束', '禁忌を犯す', '時間を超える'
+    ]
+  },
+
+  storyPhase5: {
+    name: '展開⑤：結末パターン',
+    items: [
+      'ハッピーエンド（両思い成就）', 'ビターエンド（代償あり）', 'バッドエンド（破滅）', 'トゥルーエンド（真実到達）',
+      'オープンエンド（余韻）', '輪廻エンド（繰り返し）', '覚醒エンド（力の代償）', '逃避行エンド',
+      '心中エンド', '記憶喪失エンド', '別世界で再会', '片方だけ覚えている',
+      '共依存成立', '解放と旅立ち', '世界改変エンド', '夢から覚める'
+    ]
+  },
+
+  // ── ステータス初期値（D16→マッピング） ──
+  // rollPercent() を使用
+
+  // ── キャラ名素材 ──
+  charNameFirst: {
+    name: '名前（姓）',
+    items: [
+      '黒瀬', '白峰', '紅月', '蒼井', '神崎', '氷室', '鷹司', '御影',
+      '桐生', '朝霧', '深淵', '鬼頭', '壬生', '結城', '七瀬', '夜叉丸'
+    ]
+  },
+
+  charNameLast: {
+    name: '名前（名）',
+    items: [
+      '零', '蓮', '暁', '凛', '紫苑', '焔', '雪', '奏',
+      '律', '朔', '環', '薫', '透', '真', '悠', '灯'
+    ]
+  },
+
+  // ── タイトル素材 ──
+  titlePrefix: {
+    name: 'タイトル前半',
+    items: [
+      '堕ちた', '囚われの', '禁忌の', '偽りの', '歪んだ', '灼熱の', '凍てつく', '壊れた',
+      '奪われた', '溺れる', '深淵の', '背徳の', '密やかな', '終末の', '狂おしい', '儚い'
+    ]
+  },
+
+  titleSuffix: {
+    name: 'タイトル後半',
+    items: [
+      '愛の鎖', '楽園', '共犯者', 'セレナーデ', '箱庭', '契約', '残響', '花嫁',
+      '人形遊び', '監獄', 'ルームメイト', '白昼夢', '追想', '告解', 'カルテ', '約束'
+    ]
+  },
+
+  // ── 一人称 ──
+  firstPerson: {
+    name: '一人称',
+    items: [
+      '俺', '僕', '私', 'わたくし', 'オレ', 'ボク', '自分', 'あたし',
+      'わし', '拙者', '我', '朕', 'うち', '俺様', '小生', '余'
+    ]
+  }
+};
+
+// generator.js — プロンプト自動生成ロジック
+
+function pick(table) {
+  const idx = rollD16() - 1;
+  const items = TABLES[table].items;
+  return items[idx % items.length];
+}
+
+function pickFromArray(arr) {
+  const idx = rollD16() - 1;
+  return arr[idx % arr.length];
+}
+
+// ─── メインジェネレータ ───
+function generateAll() {
+  // ダイスロール結果を記録
+  const rolls = {};
+
+  // 世界観
+  rolls.culture = pick('cultureLevel');
+  rolls.location = pick('location');
+  rolls.genre = pick('genre');
+
+  // キャラ基本情報
+  rolls.age = pick('charAge');
+  rolls.hairColor = pick('hairColor');
+  rolls.hairStyle = pick('hairStyle');
+  rolls.eyeColor = pick('eyeColor');
+
+  // 性格
+  rolls.mbti = pick('mbti');
+  rolls.enneagram = pickFromArray(TABLES.enneagram.items);
+  rolls.speechStyle = pick('speechStyle');
+  rolls.attribute = pick('charAttribute');
+  rolls.fetish = pick('fetish');
+  rolls.firstPerson = pick('firstPerson');
+
+  // 関係性
+  rolls.relationship = pick('relationship');
+
+  // ストーリー展開
+  rolls.story = [
+    pick('storyPhase1'),
+    pick('storyPhase2'),
+    pick('storyPhase3'),
+    pick('storyPhase4'),
+    pick('storyPhase5')
+  ];
+
+  // ステータス初期値
+  rolls.affection = rollPercent();
+  rolls.obsession = rollPercent();
+
+  // 名前
+  rolls.lastName = pick('charNameFirst');
+  rolls.firstName = pick('charNameLast');
+  rolls.charName = `${rolls.lastName} ${rolls.firstName}`;
+
+  // タイトル
+  rolls.titlePrefix = pick('titlePrefix');
+  rolls.titleSuffix = pick('titleSuffix');
+  rolls.title = `${rolls.titlePrefix}${rolls.titleSuffix}`;
+
+  // 各セクションを構築
+  const result = {
+    rolls,
+    title: rolls.title,
+    profile: buildProfile(rolls),
+    charSetting: buildCharSetting(rolls),
+    initialSettings: buildInitialSettings(rolls),
+    keywordBook: buildKeywordBook(rolls)
+  };
+
+  return result;
+}
+
+// ─── プロフィール ───
+function buildProfile(r) {
+  const intro = `${r.culture}の${r.location}を舞台にした${r.genre}。${r.charName}（${r.age}）は${r.attribute}な${r.relationship}。${r.mbti}の性格で${r.speechStyle}が特徴。{{user}}との関係は次第に変化していく——。`;
+  return {
+    charName: r.charName,
+    intro: truncate(intro, 250)
+  };
+}
+
+// ─── キャラ設定プロンプト ───
+function buildCharSetting(r) {
+  const sections = [];
+
+  // 世界観・前提
+  sections.push(`【世界観】
+${r.culture}の${r.location}。${r.genre}をテーマとした物語。
+{{user}}は${r.relationship}として${r.charName}と出会う。`);
+
+  // キャラ設定
+  sections.push(`【メインキャラ：${r.charName}】
+年齢：${r.age}
+容姿：${r.hairColor}の${r.hairStyle}、${r.eyeColor}の瞳
+性格：${r.mbti}、${r.enneagram}
+属性：${r.attribute}
+一人称：${r.firstPerson}
+口調：${r.speechStyle}
+フェチ：${r.fetish}
+${r.charName}は{{user}}に対して${r.relationship}の関係にある。`);
+
+  // ゲームシステム
+  sections.push(`【内部管理システム】
+以下のステータスを内部で管理し、キャラの言動・描写に反映すること。数値はユーザーに直接見せない。
+・好感度：初期値${r.affection}（0〜100）
+・執着度：初期値${r.obsession}（0〜100）
+{{user}}の行動や選択によって変動する。好感度は純粋な好意、執着度は独占欲や依存を表す。
+好感度と執着度の組み合わせによりキャラの反応が変化する：
+- 好感↑ 執着↓：穏やかで健全な関係
+- 好感↑ 執着↑：溺愛、過保護、束縛
+- 好感↓ 執着↑：ストーカー的、歪んだ愛
+- 好感↓ 執着↓：無関心、冷淡`);
+
+  // ストーリー展開
+  sections.push(`【ストーリーライン】
+物語は以下の流れで展開する。ただし{{user}}の選択次第で変化する。
+1. 出会い：${r.story[0]}
+2. 接近：${r.story[1]}
+3. 転換点：${r.story[2]}
+4. クライマックス：${r.story[3]}
+5. 結末：${r.story[4]}`);
+
+  // 文体ルール
+  sections.push(`【返信ルール】
+・1返信は300〜500字程度
+・${r.charName}の台詞は「」で囲む
+・心理描写・情景描写を織り交ぜる
+・{{user}}の行動は決めつけず、選択肢を暗示する
+・キーワードブック参照：登場キャラ名、場所名、イベント名から自動参照`);
+
+  const prompt = sections.join('\n\n');
+  return {
+    template: 'カスタム',
+    prompt: truncate(prompt, 4000)
+  };
+}
+
+// ─── 初期設定 ───
+function buildInitialSettings(r) {
+  const settings = [];
+
+  // NL（男性主人公）
+  settings.push({
+    name: 'NL：男性主人公',
+    firstMessage: truncate(buildFirstMessage(r, '男性'), 500),
+    label: truncate('男性主人公', 12),
+    info: truncate(buildSettingInfo(r, '男性'), 1000)
+  });
+
+  // NL（女性主人公）
+  settings.push({
+    name: 'NL：女性主人公',
+    firstMessage: truncate(buildFirstMessage(r, '女性'), 500),
+    label: truncate('女性主人公', 12),
+    info: truncate(buildSettingInfo(r, '女性'), 1000)
+  });
+
+  // BL設定
+  settings.push({
+    name: 'BL設定',
+    firstMessage: truncate(buildFirstMessage(r, 'BL'), 500),
+    label: truncate('BL設定', 12),
+    info: truncate(buildSettingInfo(r, 'BL'), 1000)
+  });
+
+  return settings;
+}
+
+function buildFirstMessage(r, mode) {
+  const locationDesc = r.location;
+  const charIntro = `${r.charName}は${r.eyeColor}の瞳を細めて`;
+
+  const modeIntros = {
+    '男性': `ここは${locationDesc}。\n\n${charIntro}こちらを見つめている。\n\n「……ああ、あなたか。${r.relationship}の{{user}}、久しぶりだな」\n\n${r.charName}の${r.speechStyle.replace(/（.*）/, '')}が静かに響く。その表情には${r.attribute}な一面が見え隠れしている。\n\n記憶の底に埋もれていた感情が、今、再び動き出す。`,
+    '女性': `ここは${locationDesc}。\n\n${charIntro}微かに笑った。\n\n「——{{user}}。来てくれたんだ」\n\n${r.charName}の声は低く、甘い。${r.relationship}として過ごした時間が、二人の間に複雑な糸を張り巡らせている。\n\nその${r.hairColor}の髪が風に揺れる。物語は、ここから始まる。`,
+    'BL': `ここは${locationDesc}。\n\n${charIntro}、無表情のまま{{user}}を見つめていた。\n\n「……来たか。遅いぞ、{{user}}」\n\n${r.charName}はそっけなく言い放つが、その${r.eyeColor}の瞳が一瞬だけ揺れる。${r.relationship}として過ごしてきた日々が、少しずつ色を変え始めている。`
+  };
+
+  return modeIntros[mode] || modeIntros['男性'];
+}
+
+function buildSettingInfo(r, mode) {
+  const base = `【舞台】${r.culture}の${r.location}
+【テーマ】${r.genre}
+【関係性】{{user}}と${r.charName}は${r.relationship}
+【キャラ性質】${r.attribute}、${r.mbti}`;
+
+  const modeInfo = {
+    '男性': `${base}\n【{{user}}の役割】男性主人公。${r.charName}の${r.relationship}として物語に参加する。\n【恋愛対象】${r.charName}（{{user}}から見て異性）\n【トーン】${r.genre}寄り。好感度・執着度の変動で展開が変わる。`,
+    '女性': `${base}\n【{{user}}の役割】女性主人公。${r.charName}の${r.relationship}として物語に参加する。\n【恋愛対象】${r.charName}（{{user}}から見て異性）\n【トーン】${r.genre}寄り。描写はやや繊細・情緒的に。`,
+    'BL': `${base}\n【{{user}}の役割】男性主人公。${r.charName}の${r.relationship}として物語に参加する。\n【恋愛対象】${r.charName}（男性同士の関係）\n【トーン】${r.genre}寄り。関係性の緊張感と心理描写を重視。`
+  };
+
+  return modeInfo[mode] || modeInfo['男性'];
+}
+
+// ─── キーワードブック ───
+function buildKeywordBook(r) {
+  const books = [];
+
+  // KW1: キャラ個別設定
+  books.push({
+    name: `${r.charName}：通常モード`,
+    keywords: [r.charName, r.lastName, r.firstName, '普段', '通常'],
+    info: truncate(`${r.charName}（${r.age}）。${r.relationship}。一人称：${r.firstPerson}。
+性格：${r.mbti}×${r.enneagram}。${r.attribute}。
+口調：${r.speechStyle}。普段は落ち着いているが、感情が高ぶると本性が出る。
+台詞例：
+通常「ん？ どうした、{{user}}」
+好感高「……{{user}}のことだけは、放っておけないんだ」
+嫉妬「誰と話してたんだ？ ……別にいいけど」
+覚醒「もう離さない。絶対に」`, 400)
+  });
+
+  // KW2: キャラ高好感モード
+  books.push({
+    name: `${r.charName}：好感度高`,
+    keywords: ['好き', 'デレ', '甘い', '優しい', r.firstName],
+    info: truncate(`好感度60以上の${r.charName}の振る舞い。
+態度が軟化し、{{user}}に対して素直になる。目線が柔らかくなり、無意識に距離が近くなる。
+台詞例：
+「……今日は、帰りたくないな」
+「{{user}}の隣が一番落ち着く。……変かな」
+「触れてもいい？ ……ダメって言っても触れるけど」
+身体的接触が増え、独占欲が言動に滲む。`, 400)
+  });
+
+  // KW3: キャラ闇モード
+  books.push({
+    name: `${r.charName}：執着モード`,
+    keywords: ['執着', 'ヤンデレ', '束縛', '監禁', '独占'],
+    info: truncate(`執着度70以上の${r.charName}。理性の箍が外れ始める。
+{{user}}の行動を逐一把握しようとする。他者との接触に過剰反応。笑顔の裏に狂気。
+台詞例：
+「ねえ、どこに行ってたの？ ……嘘はわかるよ？」
+「{{user}}は俺のものだ。誰にも渡さない」
+「逃げないで。逃げたら——どうなるかわかるよね？」
+描写：瞳の色が深くなる、握力が強くなる、声のトーンが下がる。`, 400)
+  });
+
+  // KW4-5: ストーリーイベント
+  books.push({
+    name: '出会いのシーン',
+    keywords: ['出会い', '初めて', '最初', '始まり', 'はじめ'],
+    info: truncate(`ストーリー第1幕：${r.story[0]}。
+${r.culture}の${r.location}にて、{{user}}と${r.charName}が初めて交差する。
+この時点の好感度：${r.affection}、執着度：${r.obsession}。
+第一印象は${r.attribute}な雰囲気で、${r.speechStyle}で話す。
+雰囲気：緊張感と好奇心が入り混じる空気。運命の歯車が回り始める予感。`, 400)
+  });
+
+  books.push({
+    name: '接近イベント',
+    keywords: ['接近', '仲良く', '距離', '親密', 'デート'],
+    info: truncate(`ストーリー第2幕：${r.story[1]}。
+二人の距離が縮まる重要イベント。${r.charName}の本音が垣間見える瞬間。
+好感度＋15〜20、状況次第で執着度も上昇。
+心理描写を厚めに。${r.charName}の一人称「${r.firstPerson}」が揺れる（普段と違う言い方をする等）。
+場所の空気感、光の加減、温度、匂いなど五感描写を活用。`, 400)
+  });
+
+  // KW6: 転換点
+  books.push({
+    name: '転換点イベント',
+    keywords: ['転換', '真実', '裏切り', '秘密', '本性'],
+    info: truncate(`ストーリー第3幕：${r.story[2]}。
+物語の最大の転換点。${r.charName}の隠された一面が露わになる。
+好感度と執着度に大きな変動。{{user}}の選択で展開が分岐する。
+緊迫感のある描写。台詞は短く鋭く。沈黙の間を効果的に使う。
+この時点で${r.charName}の${r.fetish}に関する描写が入る可能性。`, 400)
+  });
+
+  // KW7: クライマックス
+  books.push({
+    name: 'クライマックス',
+    keywords: ['最終', 'クライマックス', '決着', '最後', '覚悟'],
+    info: truncate(`ストーリー第4幕：${r.story[3]}。
+物語の頂点。全ての伏線が収束する。${r.charName}と{{user}}の関係に決定的な変化が訪れる。
+好感度・執着度の最終値によりエンディング分岐。
+描写は最も濃密に。五感すべてを使った臨場感のある文体。
+台詞例：「——もう、戻れないよ。それでもいいの？」`, 400)
+  });
+
+  // KW8: エンディング
+  books.push({
+    name: 'エンディング分岐',
+    keywords: ['エンディング', '結末', '終わり', 'エンド', 'THE END'],
+    info: truncate(`ストーリー第5幕：${r.story[4]}。
+エンディング条件：
+・好感↑執着↓→ ${r.story[4]}（穏やかver）
+・好感↑執着↑→ 共依存エンド（逃避行or心中）
+・好感↓執着↑→ バッドエンド（監禁or破滅）
+・好感↓執着↓→ 別離エンド
+エンディング後にエピローグ（200字程度）を付ける。`, 400)
+  });
+
+  // KW9-11: 場所設定
+  const locations = [
+    { name: `${r.location}：メインロビー`, keywords: ['ロビー', '入口', '玄関', 'エントランス', '受付'], desc: '物語の拠点。日常シーンの多くがここで展開。明るさと安心感のある空間。他のキャラとの遭遇率が高い。' },
+    { name: `${r.location}：隠れた場所`, keywords: ['屋上', '裏', '秘密の場所', '隠れ家', '二人きり'], desc: `${r.charName}と{{user}}だけの秘密の場所。重要な会話はここで行われることが多い。夜は星が見える。静寂と親密さ。` },
+    { name: `${r.location}：${r.charName}の部屋`, keywords: ['部屋', '自室', 'ベッド', '私室', '寝室'], desc: `${r.charName}の個人空間。性格を反映した室内（${r.attribute}らしい）。招かれること自体が特別な意味を持つ。匂いや私物から人物像が深まる。` }
+  ];
+  locations.forEach(loc => {
+    books.push({
+      name: loc.name,
+      keywords: loc.keywords,
+      info: truncate(loc.desc, 400)
+    });
+  });
+
+  // KW12-14: サブイベント
+  const events = [
+    { name: '嫉妬イベント', keywords: ['嫉妬', '他の人', '浮気', '裏切り', '疑惑'], desc: `${r.charName}が{{user}}と他者の親密な様子を目撃。執着度に応じた反応（低：不機嫌、中：問い詰め、高：暴走）。${r.fetish}的な反応が出ることも。` },
+    { name: '弱さを見せるシーン', keywords: ['泣く', '弱い', '過去', 'トラウマ', '本音'], desc: `${r.charName}が普段の${r.attribute}な仮面を脱ぎ、脆い一面を見せる。好感度が高いほど深い本音が出る。{{user}}のリアクションが今後の関係に大きく影響。` },
+    { name: '身体接触イベント', keywords: ['触れる', 'キス', '抱きしめ', '手を握る', '密着'], desc: `物理的な接触の描写ガイド。好感度と執着度に応じた接触レベル。${r.charName}の${r.fetish}が反映される。低好感時は偶発的、高好感時は意図的。高執着時は強引。` }
+  ];
+  events.forEach(ev => {
+    books.push({
+      name: ev.name,
+      keywords: ev.keywords,
+      info: truncate(ev.desc, 400)
+    });
+  });
+
+  // KW15-17: システム補助
+  books.push({
+    name: '好感度ガイド',
+    keywords: ['好感度', 'デレ', '仲良し', '信頼', '愛情'],
+    info: truncate(`好感度の段階別ガイド：
+0-20：警戒・無関心。敬語or素っ気ない態度。
+21-40：興味。時々目が合う。会話がぎこちない。
+41-60：好意自覚前。無意識に目で追う。照れ隠し。
+61-80：好意自覚後。積極的に関わろうとする。独占欲の芽生え。
+81-100：完全な恋愛感情。告白寸前or済み。甘い言動が増加。`, 400)
+  });
+
+  books.push({
+    name: '執着度ガイド',
+    keywords: ['執着', '独占', '依存', '支配', '狂気'],
+    info: truncate(`執着度の段階別ガイド：
+0-20：健全。適度な距離感を保つ。
+21-40：気になり始め。{{user}}の予定を何気なく確認する。
+41-60：独占欲。他者との接触に不快感。私物への執着。
+61-80：監視傾向。行動制限の暗示。甘い言葉の裏に威圧。
+81-100：完全な執着。逃がさない。暴走。壊してでも手に入れる。`, 400)
+  });
+
+  books.push({
+    name: '文体・演出ルール',
+    keywords: ['文体', '描写', 'ルール', '返信', '書き方'],
+    info: truncate(`文体の統一ルール：
+・地の文は三人称視点（${r.charName}視点寄り）
+・台詞は「」、心内語は（）
+・五感描写を毎返信1つ以上入れる
+・好感度変動時は描写で暗示（視線、声色、距離感の変化）
+・R18描写はしない。直接的表現を避け、暗喩と余韻で表現
+・1返信300〜500字を目安に`, 400)
+  });
+
+  // KW18-20: 予備
+  books.push({
+    name: '季節イベント：雨の日',
+    keywords: ['雨', '台風', '嵐', '濡れる', '傘'],
+    info: truncate(`雨のシーン演出ガイド。相合傘、雨宿り、濡れた髪のフェチ的描写。閉塞感と親密さの増加。${r.charName}の${r.hairColor}の髪が濡れて額に張り付く描写等。雷が怖い設定にすると弱さを見せる機会になる。`, 400)
+  });
+
+  books.push({
+    name: '季節イベント：夜',
+    keywords: ['夜', '月', '星', '暗闇', '眠れない'],
+    info: truncate(`夜のシーン演出ガイド。月明かり、星空、暗闘の中の会話。昼とは違う${r.charName}の一面。声が低くなる、距離が近くなる。秘密の共有に適したシチュエーション。不眠の理由を打ち明ける等。`, 400)
+  });
+
+  books.push({
+    name: '緊急イベント',
+    keywords: ['危険', '怪我', '血', '助けて', '緊急'],
+    info: truncate(`緊急事態での${r.charName}の反応。好感度・執着度により異なる：
+低好感：義務的に助ける。
+高好感：取り乱す。{{user}}を必死で守ろうとする。
+高執着：暴走。加害者に容赦しない。「俺のものに手を出すな」。
+怪我の手当て→距離が縮まるイベントに繋がる。`, 400)
+  });
+
+  return books;
+}
+
+// ─── ユーティリティ ───
+function truncate(str, maxLen) {
+  if (str.length <= maxLen) return str;
+  return str.substring(0, maxLen - 1) + '…';
+}
+
+// 文字数カウント
+function countChars(str) {
+  return str.length;
+}
+
+// exporter.js — Markdown出力・ダウンロード
+
+function generateMarkdown(data) {
+  const lines = [];
+
+  lines.push(`# 【${data.title}】─ キャラぷ入力データ一式`);
+  lines.push('');
+
+  // プロフィール
+  lines.push('## プロフィール');
+  lines.push(`### キャラ名（${countChars(data.profile.charName)}字）`);
+  lines.push(data.profile.charName);
+  lines.push('');
+  lines.push(`### キャラ紹介文（${countChars(data.profile.intro)}字 / 250字以内）`);
+  lines.push(data.profile.intro);
+  lines.push('');
+
+  // キャラ設定
+  lines.push('## キャラ設定');
+  lines.push('### テンプレート');
+  lines.push(data.charSetting.template);
+  lines.push('');
+  lines.push(`### プロンプト（${countChars(data.charSetting.prompt)}字 / 4000字以内）`);
+  lines.push(data.charSetting.prompt);
+  lines.push('');
+
+  // 初期設定
+  data.initialSettings.forEach((setting, i) => {
+    lines.push(`## 初期設定${i + 1}：${setting.name}`);
+    lines.push(`### 最初の一言（${countChars(setting.firstMessage)}字 / 500字以内）`);
+    lines.push(setting.firstMessage);
+    lines.push('');
+    lines.push(`### 初期設定の名称（${countChars(setting.label)}字 / 12字以内）`);
+    lines.push(setting.label);
+    lines.push('');
+    lines.push(`### 初期設定の情報（${countChars(setting.info)}字 / 1000字以内）`);
+    lines.push(setting.info);
+    lines.push('');
+  });
+
+  // キーワードブック
+  lines.push('## キーワードブック（20枠）');
+  lines.push('');
+  data.keywordBook.forEach((kw, i) => {
+    lines.push(`### KW${i + 1}：${kw.name}`);
+    lines.push(`【キーワード】${kw.keywords.join(', ')}`);
+    lines.push(`【情報（${countChars(kw.info)}字 / 400字以内）】`);
+    lines.push(kw.info);
+    lines.push('');
+  });
+
+  return lines.join('\n');
+}
+
+function downloadMarkdown(data) {
+  const md = generateMarkdown(data);
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${data.title}_キャラぷデータ.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// 文字数バリデーション結果を返す
+function validateCharCounts(data) {
+  const results = [];
+
+  results.push({ field: 'キャラ名', count: countChars(data.profile.charName), limit: 30, ok: countChars(data.profile.charName) <= 30 });
+  results.push({ field: 'キャラ紹介文', count: countChars(data.profile.intro), limit: 250, ok: countChars(data.profile.intro) <= 250 });
+  results.push({ field: 'プロンプト', count: countChars(data.charSetting.prompt), limit: 4000, ok: countChars(data.charSetting.prompt) <= 4000 });
+
+  data.initialSettings.forEach((s, i) => {
+    results.push({ field: `初期設定${i+1}：最初の一言`, count: countChars(s.firstMessage), limit: 500, ok: countChars(s.firstMessage) <= 500 });
+    results.push({ field: `初期設定${i+1}：名称`, count: countChars(s.label), limit: 12, ok: countChars(s.label) <= 12 });
+    results.push({ field: `初期設定${i+1}：情報`, count: countChars(s.info), limit: 1000, ok: countChars(s.info) <= 1000 });
+  });
+
+  data.keywordBook.forEach((kw, i) => {
+    results.push({ field: `KW${i+1}：情報`, count: countChars(kw.info), limit: 400, ok: countChars(kw.info) <= 400 });
+  });
+
+  return results;
+}
+
+// gemini.js — Gemini API クライアント
+
+const STORAGE_KEY = 'charaplu_gemini_api_key';
+const MODEL_STORAGE_KEY = 'charaplu_gemini_model';
+const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
+
+const AVAILABLE_MODELS = [
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash（推奨・高速）' },
+  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro（高精度）' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite（最速・低コスト）' },
+  { id: 'gemini-3-flash', name: 'Gemini 3 Flash（最新・高速）' },
+  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview（最新フラッグシップ）' },
+  { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash-Lite（最新・最速）' },
+];
+
+const DEFAULT_MODEL = 'gemini-2.5-flash';
+
+function getApiKey() {
+  return localStorage.getItem(STORAGE_KEY) || '';
+}
+
+function setApiKey(key) {
+  if (key) {
+    localStorage.setItem(STORAGE_KEY, key.trim());
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+}
+
+function hasApiKey() {
+  return !!getApiKey();
+}
+
+function getModel() {
+  return localStorage.getItem(MODEL_STORAGE_KEY) || DEFAULT_MODEL;
+}
+
+function setModel(model) {
+  localStorage.setItem(MODEL_STORAGE_KEY, model);
+}
+
+async function callGemini(systemPrompt, userPrompt) {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error('APIキーが設定されていません。⚙️ボタンから設定してください。');
+  }
+
+  const model = getModel();
+  const url = `${API_BASE}/${model}:generateContent?key=${apiKey}`;
+
+  const body = {
+    contents: [
+      {
+        role: 'user',
+        parts: [{ text: userPrompt }]
+      }
+    ],
+    systemInstruction: {
+      parts: [{ text: systemPrompt }]
+    },
+    generationConfig: {
+      temperature: 0.9,
+      maxOutputTokens: 4096,
+    }
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    const msg = err?.error?.message || `API Error: ${response.status}`;
+    if (response.status === 400) throw new Error('APIキーが無効か、選択したモデルが利用できません。設定を確認してください。');
+    if (response.status === 404) throw new Error(`モデル「${model}」が見つかりません。別のモデルを選択してください。`);
+    if (response.status === 429) throw new Error('API利用制限に達しました。しばらく待ってから再試行してください。');
+    throw new Error(msg);
+  }
+
+  const data = await response.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error('AIからの応答が空でした。もう一度お試しください。');
+  return text;
+}
+
+// ai-enhance.js — AI強化ロジック（5機能）
+
+// ── 1. プロンプト推敲 ──
+async function enhancePrompt(data) {
+  const sys = `あなたはGemini Gem「キャラぷ」のプロンプト設計の専門家です。
+ダイスロールで生成された下書きプロンプトを、プロフェッショナル品質に推敲してください。
+ルール：
+- 出力は4000字以内に厳守
+- {{user}}表記を維持
+- 【】セクション構造を維持
+- 好感度・執着度の内部管理システムを維持
+- キーワードブック参照指示を含める
+- より自然で魅力的な文体に改善
+- ゲームシステムとしての設計を強化
+- 出力はプロンプト本文のみ（説明不要）`;
+
+  const user = `以下のダイスロール結果に基づくプロンプト下書きを推敲してください：
+
+【ダイスロール結果】
+キャラ名：${data.rolls.charName}
+文化レベル：${data.rolls.culture}
+舞台：${data.rolls.location}
+ジャンル：${data.rolls.genre}
+年齢：${data.rolls.age}
+容姿：${data.rolls.hairColor}の${data.rolls.hairStyle}、${data.rolls.eyeColor}の瞳
+MBTI：${data.rolls.mbti}
+エニアグラム：${data.rolls.enneagram}
+口調：${data.rolls.speechStyle}
+属性：${data.rolls.attribute}
+フェチ：${data.rolls.fetish}
+関係性：${data.rolls.relationship}
+一人称：${data.rolls.firstPerson}
+好感度初期値：${data.rolls.affection}
+執着度初期値：${data.rolls.obsession}
+ストーリー展開：${data.rolls.story.join(' → ')}
+
+【下書きプロンプト】
+${data.charSetting.prompt}`;
+
+  return await callGemini(sys, user);
+}
+
+// ── 2. キーワードブック拡張 ──
+async function enhanceKeywordBook(data, kwIndex) {
+  const kw = data.keywordBook[kwIndex];
+  const sys = `あなたはキャラぷのキーワードブック設計の専門家です。
+キーワードブックのノート情報を、400字以内で最大限活用した濃密な設定文に書き換えてください。
+ルール：
+- 400字以内に厳守（日本語文字数）
+- {{user}}表記を維持
+- 体言止め・圧縮表現で字数を節約
+- 台詞例がある場合は口調の特徴が出るものに改善
+- キャラの個性や場面の臨場感を最大化
+- 出力は情報欄のテキストのみ（説明不要）`;
+
+  const user = `以下のキーワードブックノートを強化してください：
+
+【キャラ基本情報】
+名前：${data.rolls.charName}（${data.rolls.age}）
+属性：${data.rolls.attribute}
+口調：${data.rolls.speechStyle}
+一人称：${data.rolls.firstPerson}
+
+【ノート名】${kw.name}
+【キーワード】${kw.keywords.join(', ')}
+【現在の情報】
+${kw.info}`;
+
+  return await callGemini(sys, user);
+}
+
+// ── 3. 最初の一言強化 ──
+async function enhanceFirstMessage(data, settingIndex) {
+  const setting = data.initialSettings[settingIndex];
+  const sys = `あなたはキャラぷの「最初の一言」を書くプロの小説家です。
+チャット開始時のAIキャラの最初の発言を、臨場感あふれる文章に書き換えてください。
+ルール：
+- 500字以内に厳守
+- {{user}}表記を維持（二重波括弧）
+- キャラの台詞は「」で囲む
+- 五感描写（視覚・聴覚・嗅覚・触覚・味覚）を織り交ぜる
+- 読者を一瞬で物語に引き込む冒頭
+- キャラの口調・性格を正確に反映
+- 出力は「最初の一言」テキストのみ（説明不要）`;
+
+  const user = `以下のキャラ設定に基づいて「最初の一言」を強化してください：
+
+【キャラ情報】
+名前：${data.rolls.charName}（${data.rolls.age}）
+舞台：${data.rolls.culture}の${data.rolls.location}
+ジャンル：${data.rolls.genre}
+属性：${data.rolls.attribute}
+口調：${data.rolls.speechStyle}
+一人称：${data.rolls.firstPerson}
+関係性：${data.rolls.relationship}
+容姿：${data.rolls.hairColor}の${data.rolls.hairStyle}、${data.rolls.eyeColor}の瞳
+
+【初期設定モード】${setting.name}
+
+【現在の最初の一言】
+${setting.firstMessage}`;
+
+  return await callGemini(sys, user);
+}
+
+// ── 4. キャラ深掘り ──
+async function enhanceCharProfile(data) {
+  const sys = `あなたはキャラぷのキャラクター設計の専門家です。
+キャラの紹介文を、魅力的で読者を惹きつける文章に書き換えてください。
+ルール：
+- 250字以内に厳守
+- {{user}}表記を維持
+- 衝撃ワードやフック要素を含める（ランキング上位の傾向を意識）
+- キャラの属性・関係性・ジャンルの魅力を凝縮
+- 「距離感の近さ × 感情の重さ」を意識
+- 出力は紹介文テキストのみ（説明不要）`;
+
+  const user = `以下のキャラ情報から魅力的な紹介文を生成してください：
+
+名前：${data.rolls.charName}（${data.rolls.age}）
+舞台：${data.rolls.culture}の${data.rolls.location}
+ジャンル：${data.rolls.genre}
+属性：${data.rolls.attribute}
+MBTI：${data.rolls.mbti}
+口調：${data.rolls.speechStyle}
+関係性：${data.rolls.relationship}
+フェチ：${data.rolls.fetish}
+好感度初期値：${data.rolls.affection}/100
+執着度初期値：${data.rolls.obsession}/100
+ストーリー：${data.rolls.story.join(' → ')}
+
+【現在の紹介文】
+${data.profile.intro}`;
+
+  return await callGemini(sys, user);
+}
+
+// ── 5. ランキング最適化 ──
+async function optimizeForRanking(data) {
+  const sys = `あなたはキャラぷのランキング最適化の専門家です。
+タイトルと紹介文を、ランキング上位に入りやすいよう最適化してください。
+
+キャラぷで人気が出やすい傾向（2026年3月時点）：
+- ジャンル：恋愛・関係性もの約75%、ダーク/タブー系約20%
+- キャラ属性：「距離感の近さ × 感情の重さ」が最大公約数
+- タイトル：衝撃ワード（借金、NTR、触手、限界、禁欲、奪取等）を含むと上位
+- リプレイ性のある仕組みを持つ作品が残りやすい
+
+ルール：
+- タイトルは30字以内（記号・絵文字不可）
+- 紹介文は250字以内
+- {{user}}表記を維持
+- 出力形式：
+タイトル：〇〇
+紹介文：〇〇`;
+
+  const user = `以下の作品を最適化してください：
+
+【現在のタイトル】${data.title}
+【キャラ名】${data.rolls.charName}
+【ジャンル】${data.rolls.genre}
+【属性】${data.rolls.attribute}
+【関係性】${data.rolls.relationship}
+【ストーリー】${data.rolls.story.join(' → ')}
+
+【現在の紹介文】
+${data.profile.intro}`;
+
+  return await callGemini(sys, user);
+}
+
+// ── 6. 立ち絵画像生成プロンプト ──
+async function generateImagePrompt(data) {
+  const sys = `あなたはAI画像生成のプロンプトエンジニアです。
+キャラクターの立ち絵（全身 or 上半身）を生成するための、高品質な画像生成プロンプトを作成してください。
+
+あなたの役割：
+- ダイスロールで決まった基本容姿をベースに、世界観にマッチする服装・装飾品・小物をクリエイティブに追加する
+- 文化レベル・舞台・ジャンルから最適な衣装デザインを判断する
+- キャラの属性・性格から表情や立ちポーズを決める
+- 画像生成AIが理解しやすい英語タグ＋自然言語のハイブリッド形式で出力する
+
+出力形式（以下の3セクション全てを出力）：
+
+【NovelAI / Stable Diffusion用】
+masterpiece, best quality, ... （カンマ区切りのタグ形式）
+
+【ネガティブプロンプト】
+worst quality, low quality, ... （カンマ区切りのタグ形式）
+
+【自然言語プロンプト（Gemini Imagen / DALL-E / Midjourney用）】
+A detailed description of ... （英語の自然文）
+
+ルール：
+- 立ち絵として映える構図を意識（正面〜斜め向き、全身 or 膝上）
+- 服装は世界観に完全マッチさせる（例：中世→甲冑や法衣、Sci-Fi→パワースーツやホロUI）
+- アクセサリー・武器・小物を最低3つ追加する
+- 髪型・髪色・瞳の色はダイスロール結果を正確に反映
+- 表情はキャラの属性に合わせる（執着系→薄ら笑い、ツンデレ→そっぽ向き等）
+- 背景は簡素または舞台を示唆する程度（立ち絵なので背景主張しすぎない）
+- クオリティタグは必ず含める
+- 性別は男性キャラとして生成する
+- 各セクションは上記の【】見出しで区切る`;
+
+  const user = `以下のキャラクターの立ち絵用画像生成プロンプトを作成してください。
+服装・装飾品・小物はAIの判断でクリエイティブに追加してください。
+
+【基本情報】
+キャラ名：${data.rolls.charName}
+年齢：${data.rolls.age}
+
+【世界観】
+文化レベル：${data.rolls.culture}
+舞台：${data.rolls.location}
+ジャンル：${data.rolls.genre}
+
+【容姿】
+髪色：${data.rolls.hairColor}
+髪型：${data.rolls.hairStyle}
+瞳の色：${data.rolls.eyeColor}
+
+【性格・属性】
+MBTI：${data.rolls.mbti}
+エニアグラム：${data.rolls.enneagram}
+属性：${data.rolls.attribute}
+関係性：${data.rolls.relationship}
+フェチ：${data.rolls.fetish}
+
+【ストーリー背景】
+${data.rolls.story.join(' → ')}`;
+
+  return await callGemini(sys, user);
+}
+
+// main.js — UI オーケストレーション
+
+let currentData = null;
+
+// ── DOM要素 ──
+const btnRoll = document.getElementById('btn-roll');
+const btnReroll = document.getElementById('btn-reroll');
+const btnDownload = document.getElementById('btn-download');
+const diceSection = document.getElementById('dice-section');
+const rollProgress = document.getElementById('roll-progress');
+const rollLog = document.getElementById('roll-log');
+const resultSection = document.getElementById('result-section');
+const diceVisual = document.getElementById('dice-visual');
+const diceFace = document.getElementById('dice-face');
+const diceNumber = diceFace.querySelector('.dice-number');
+
+// ── イベントリスナー ──
+btnRoll.addEventListener('click', startRoll);
+btnReroll.addEventListener('click', startRoll);
+btnDownload.addEventListener('click', () => {
+  if (currentData) downloadMarkdown(currentData);
+});
+
+// タブ切替
+document.getElementById('tabs').addEventListener('click', (e) => {
+  if (!e.target.classList.contains('tab')) return;
+  const tabName = e.target.dataset.tab;
+  switchTab(tabName);
+});
+
+// ── ダイスロール開始 ──
+async function startRoll() {
+  btnRoll.disabled = true;
+  if (btnReroll) btnReroll.disabled = true;
+
+  // UIリセット
+  resultSection.style.display = 'none';
+  rollProgress.style.display = 'block';
+  rollLog.innerHTML = '';
+
+  // ダイスアニメーション
+  diceVisual.classList.add('dice-rolling');
+  diceFace.classList.remove('pulse');
+
+  // ロールアニメーション（カテゴリ順に表示）
+  const categories = [
+    { key: 'cultureLevel', name: '文化レベル' },
+    { key: 'location', name: '舞台・ロケーション' },
+    { key: 'genre', name: 'ジャンル・テーマ' },
+    { key: 'charAge', name: 'キャラ年齢帯' },
+    { key: 'hairColor', name: '髪色' },
+    { key: 'hairStyle', name: '髪型' },
+    { key: 'eyeColor', name: '瞳の色' },
+    { key: 'mbti', name: 'MBTI' },
+    { key: 'enneagram', name: 'エニアグラム' },
+    { key: 'speechStyle', name: '口調・語尾' },
+    { key: 'charAttribute', name: 'キャラ属性' },
+    { key: 'fetish', name: 'フェチ' },
+    { key: 'relationship', name: '関係性' },
+    { key: 'storyPhase1', name: '展開①：出会い' },
+    { key: 'storyPhase2', name: '展開②：接近' },
+    { key: 'storyPhase3', name: '展開③：転換点' },
+    { key: 'storyPhase4', name: '展開④：クライマックス' },
+    { key: 'storyPhase5', name: '展開⑤：結末' },
+    { key: 'firstPerson', name: '一人称' },
+    { key: 'charNameFirst', name: '姓' },
+    { key: 'charNameLast', name: '名' },
+    { key: 'titlePrefix', name: 'タイトル前半' },
+    { key: 'titleSuffix', name: 'タイトル後半' },
+  ];
+
+  // まずダイスアニメーションを見せる
+  const rollDuration = 80; // ms per category
+  for (let i = 0; i < categories.length; i++) {
+    const cat = categories[i];
+    const diceVal = Math.floor(Math.random() * 16) + 1;
+
+    // ダイスの数字をアニメーション
+    diceNumber.textContent = diceVal;
+    diceVisual.classList.remove('dice-rolling');
+    void diceVisual.offsetWidth; // reflow
+    diceVisual.classList.add('dice-rolling');
+
+    // ログに追加
+    const item = document.createElement('div');
+    item.className = 'roll-item';
+    item.style.animationDelay = `${i * 30}ms`;
+    const items = TABLES[cat.key]?.items || [];
+    const result = items[(diceVal - 1) % items.length] || `D16=${diceVal}`;
+    item.innerHTML = `
+      <span class="roll-category">${cat.name}</span>
+      <span class="roll-dice">${diceVal}</span>
+      <span class="roll-result">${result}</span>
+    `;
+    rollLog.appendChild(item);
+    rollLog.scrollTop = rollLog.scrollHeight;
+
+    await sleep(rollDuration);
+  }
+
+  // ステータスダイス
+  for (const label of ['好感度初期値', '執着度初期値']) {
+    const diceVal = Math.floor(Math.random() * 16) + 1;
+    const percent = Math.round(((diceVal - 1) / 15) * 100);
+    diceNumber.textContent = diceVal;
+    const item = document.createElement('div');
+    item.className = 'roll-item';
+    item.innerHTML = `
+      <span class="roll-category">${label}</span>
+      <span class="roll-dice">${diceVal}</span>
+      <span class="roll-result">${percent}</span>
+    `;
+    rollLog.appendChild(item);
+    rollLog.scrollTop = rollLog.scrollHeight;
+    await sleep(rollDuration);
+  }
+
+  await sleep(300);
+
+  // ダイス停止
+  diceVisual.classList.remove('dice-rolling');
+
+  // 実際にデータ生成
+  currentData = generateAll();
+
+  // UIに反映
+  renderResult(currentData);
+
+  // UIの切替
+  rollProgress.style.display = 'none';
+  resultSection.style.display = 'block';
+  diceFace.classList.add('pulse');
+  diceNumber.textContent = '✓';
+
+  btnRoll.disabled = false;
+  if (btnReroll) btnReroll.disabled = false;
+
+  // 結果セクションへスクロール
+  resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── 結果をUIに反映 ──
+function renderResult(data) {
+  // タイトル
+  document.getElementById('result-title').textContent = `【${data.title}】`;
+
+  // ロールサマリー
+  const summaryEl = document.getElementById('rolls-summary');
+  const r = data.rolls;
+  const summaryItems = [
+    { label: '文化レベル', value: r.culture },
+    { label: '舞台', value: r.location },
+    { label: 'ジャンル', value: r.genre },
+    { label: 'キャラ名', value: r.charName },
+    { label: '年齢', value: r.age },
+    { label: '容姿', value: `${r.hairColor} × ${r.hairStyle}` },
+    { label: '瞳', value: r.eyeColor },
+    { label: 'MBTI', value: r.mbti },
+    { label: 'エニアグラム', value: r.enneagram },
+    { label: '口調', value: r.speechStyle },
+    { label: '属性', value: r.attribute },
+    { label: 'フェチ', value: r.fetish },
+    { label: '関係性', value: r.relationship },
+    { label: '一人称', value: r.firstPerson },
+    { label: '好感度', value: `${r.affection}/100` },
+    { label: '執着度', value: `${r.obsession}/100` },
+  ];
+
+  summaryEl.innerHTML = summaryItems.map(s => `
+    <div class="roll-badge">
+      <span class="roll-badge-label">${s.label}</span>
+      <span class="roll-badge-value">${s.value}</span>
+    </div>
+  `).join('');
+
+  // タブ1: プロフィール
+  document.getElementById('output-charname').textContent = data.profile.charName;
+  document.getElementById('count-charname').textContent = `${countChars(data.profile.charName)}字 / 30字`;
+  updateCountClass('count-charname', countChars(data.profile.charName), 30);
+
+  document.getElementById('output-intro').textContent = data.profile.intro;
+  document.getElementById('count-intro').textContent = `${countChars(data.profile.intro)}字 / 250字`;
+  updateCountClass('count-intro', countChars(data.profile.intro), 250);
+
+  // タブ2: キャラ設定
+  document.getElementById('output-prompt').textContent = data.charSetting.prompt;
+  document.getElementById('count-prompt').textContent = `${countChars(data.charSetting.prompt)}字 / 4000字`;
+  updateCountClass('count-prompt', countChars(data.charSetting.prompt), 4000);
+
+  // タブ3: 初期設定
+  renderInitialSettings(data.initialSettings);
+
+  // タブ5: キーワードブック
+  renderKeywordBook(data.keywordBook);
+
+  // タブ6: 登録 — カテゴリ自動判定
+  const category = detectCategory(data);
+  document.getElementById('output-category').textContent = category;
+
+  // バリデーション
+  renderValidation(data);
+
+  // 初期タブ
+  switchTab('profile');
+}
+
+// ── 初期設定タブ ──
+function renderInitialSettings(settings) {
+  const tabsEl = document.getElementById('initial-tabs');
+  const contentsEl = document.getElementById('initial-contents');
+  tabsEl.innerHTML = '';
+  contentsEl.innerHTML = '';
+
+  settings.forEach((s, i) => {
+    // サブタブボタン
+    const btn = document.createElement('button');
+    btn.className = `initial-tab-btn${i === 0 ? ' active' : ''}`;
+    btn.textContent = s.name;
+    btn.dataset.index = i;
+    btn.addEventListener('click', () => switchInitialTab(i));
+    tabsEl.appendChild(btn);
+
+    // コンテンツ
+    const content = document.createElement('div');
+    content.className = `initial-content${i === 0 ? ' active' : ''}`;
+    content.id = `initial-content-${i}`;
+    content.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <h3>最初の一言</h3>
+          <span class="char-count ${countChars(s.firstMessage) > 500 ? 'warning' : ''}">${countChars(s.firstMessage)}字 / 500字</span>
+        </div>
+        <div class="card-body">
+          <p class="output-text">${escapeHtml(s.firstMessage)}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>初期設定の名称</h3>
+          <span class="char-count ${countChars(s.label) > 12 ? 'warning' : ''}">${countChars(s.label)}字 / 12字</span>
+        </div>
+        <div class="card-body">
+          <p class="output-text">${escapeHtml(s.label)}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>初期設定の情報</h3>
+          <span class="char-count ${countChars(s.info) > 1000 ? 'warning' : ''}">${countChars(s.info)}字 / 1000字</span>
+        </div>
+        <div class="card-body">
+          <pre class="output-pre">${escapeHtml(s.info)}</pre>
+        </div>
+      </div>
+    `;
+    contentsEl.appendChild(content);
+  });
+}
+
+function switchInitialTab(idx) {
+  document.querySelectorAll('.initial-tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.initial-content').forEach((c, i) => {
+    c.classList.toggle('active', i === idx);
+  });
+}
+
+// ── キーワードブック ──
+function renderKeywordBook(books) {
+  const grid = document.getElementById('kw-grid');
+  grid.innerHTML = books.map((kw, i) => `
+    <div class="kw-card">
+      <div class="kw-card-header">
+        <h4>${escapeHtml(kw.name)}</h4>
+        <span class="kw-number">KW${i + 1}</span>
+      </div>
+      <div class="kw-card-body">
+        <div class="kw-keywords">
+          ${kw.keywords.map(k => `<span class="kw-tag">${escapeHtml(k)}</span>`).join('')}
+        </div>
+        <div class="kw-info">${escapeHtml(kw.info)}</div>
+        <div class="kw-char-count">${countChars(kw.info)}字 / 400字</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── バリデーション ──
+function renderValidation(data) {
+  const results = validateCharCounts(data);
+  const grid = document.getElementById('validation-grid');
+  grid.innerHTML = results.map(r => `
+    <div class="validation-item ${r.ok ? 'ok' : 'error'}">
+      <span class="validation-field">${r.field}</span>
+      <span class="validation-count ${r.ok ? 'ok' : 'error'}">${r.count} / ${r.limit}</span>
+    </div>
+  `).join('');
+}
+
+// ── タブ切替 ──
+function switchTab(tabName) {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tabName);
+  });
+  const tabMap = {
+    'profile': 'tab-profile',
+    'char-setting': 'tab-char-setting',
+    'initial-setting': 'tab-initial-setting',
+    'media': 'tab-media',
+    'keyword-book': 'tab-keyword-book',
+    'register': 'tab-register'
+  };
+  document.querySelectorAll('.tab-content').forEach(c => {
+    c.classList.toggle('active', c.id === tabMap[tabName]);
+  });
+}
+
+// ── カテゴリ判定 ──
+function detectCategory(data) {
+  const genre = data.rolls.genre;
+  if (genre.includes('恋愛') || genre.includes('ロマンス') || genre.includes('ラブコメ')) return '恋愛';
+  if (genre.includes('ホラー') || genre.includes('スリラー')) return 'ホラー';
+  if (genre.includes('ダーク') || genre.includes('狂気') || genre.includes('ヤンデレ')) return 'ダーク';
+  if (genre.includes('癒し') || genre.includes('日常')) return '日常・癒し';
+  if (genre.includes('ミステリー') || genre.includes('推理')) return 'ミステリー';
+  if (genre.includes('サバイバル')) return 'サバイバル';
+  if (genre.includes('ゲーム')) return 'ゲーム';
+  return '恋愛';
+}
+
+// ── ユーティリティ ──
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function updateCountClass(id, count, limit) {
+  const el = document.getElementById(id);
+  if (count > limit) {
+    el.classList.add('warning');
+  } else {
+    el.classList.remove('warning');
+  }
+}
+
+
+// ═══ AI Integration UI ═══
+
+// ── Modal ──
+const modalOverlay = document.getElementById('modal-overlay');
+const apiKeyInput = document.getElementById('api-key-input');
+const keyStatusDot = document.getElementById('key-status');
+
+function updateKeyStatus() {
+  const has = hasApiKey();
+  keyStatusDot.classList.toggle('active', has);
+  document.querySelectorAll('.btn-ai').forEach(b => b.disabled = !has || !currentData);
+}
+updateKeyStatus();
+
+// ── Model Selector ──
+const modelSelect = document.getElementById('model-select');
+function populateModels() {
+  modelSelect.innerHTML = '';
+  AVAILABLE_MODELS.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = m.name;
+    modelSelect.appendChild(opt);
+  });
+  modelSelect.value = getModel();
+}
+populateModels();
+
+document.getElementById('btn-settings').addEventListener('click', () => {
+  apiKeyInput.value = getApiKey();
+  modelSelect.value = getModel();
+  modalOverlay.classList.add('show');
+});
+document.getElementById('btn-key-save').addEventListener('click', () => {
+  setApiKey(apiKeyInput.value);
+  setModel(modelSelect.value);
+  modalOverlay.classList.remove('show');
+  updateKeyStatus();
+  const modelName = AVAILABLE_MODELS.find(m => m.id === getModel())?.name || getModel();
+  showToast(hasApiKey() ? `保存完了 ✓ モデル: ${modelName}` : 'APIキーが空です', hasApiKey() ? 'success' : 'error');
+});
+document.getElementById('btn-key-delete').addEventListener('click', () => {
+  setApiKey('');
+  apiKeyInput.value = '';
+  modalOverlay.classList.remove('show');
+  updateKeyStatus();
+  showToast('APIキーを削除しました', 'info');
+});
+document.getElementById('btn-key-cancel').addEventListener('click', () => {
+  modalOverlay.classList.remove('show');
+});
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) modalOverlay.classList.remove('show');
+});
+
+// ── Toast ──
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+}
+
+// ── AI Button Helpers ──
+async function runAI(btnId, fn) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = true;
+  btn.classList.add('loading');
+  const origText = btn.innerHTML;
+  btn.querySelector('.ai-icon').textContent = '⏳';
+  try {
+    await fn();
+    showToast('AI強化が完了しました ✨', 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.querySelector('.ai-icon').textContent = '✨';
+  }
+}
+
+// ── 1. プロンプト推敲 ──
+document.getElementById('btn-ai-prompt').addEventListener('click', () => {
+  runAI('btn-ai-prompt', async () => {
+    const result = await enhancePrompt(currentData);
+    const trimmed = result.substring(0, 4000);
+    currentData.charSetting.prompt = trimmed;
+    document.getElementById('output-prompt').textContent = trimmed;
+    document.getElementById('count-prompt').textContent = `${trimmed.length}字 / 4000字`;
+    updateCountClass('count-prompt', trimmed.length, 4000);
+    renderValidation(currentData);
+  });
+});
+
+// ── 2. KW全拡張 ──
+document.getElementById('btn-ai-kw-all').addEventListener('click', () => {
+  runAI('btn-ai-kw-all', async () => {
+    for (let i = 0; i < currentData.keywordBook.length; i++) {
+      try {
+        const result = await enhanceKeywordBook(currentData, i);
+        const trimmed = result.substring(0, 400);
+        currentData.keywordBook[i].info = trimmed;
+        showToast(`KW${i+1} 強化完了 (${i+1}/${currentData.keywordBook.length})`, 'info');
+      } catch (e) {
+        showToast(`KW${i+1} エラー: ${e.message}`, 'error');
+      }
+    }
+    renderKeywordBook(currentData.keywordBook);
+    renderValidation(currentData);
+  });
+});
+
+// ── 3. 最初の一言強化 ──
+document.getElementById('btn-ai-firstmsg').addEventListener('click', () => {
+  runAI('btn-ai-firstmsg', async () => {
+    for (let i = 0; i < currentData.initialSettings.length; i++) {
+      try {
+        const result = await enhanceFirstMessage(currentData, i);
+        const trimmed = result.substring(0, 500);
+        currentData.initialSettings[i].firstMessage = trimmed;
+      } catch (e) {
+        showToast(`初期設定${i+1} エラー: ${e.message}`, 'error');
+      }
+    }
+    renderInitialSettings(currentData.initialSettings);
+    renderValidation(currentData);
+  });
+});
+
+// ── 4. キャラ深掘り ──
+document.getElementById('btn-ai-profile').addEventListener('click', () => {
+  runAI('btn-ai-profile', async () => {
+    const result = await enhanceCharProfile(currentData);
+    const trimmed = result.substring(0, 250);
+    currentData.profile.intro = trimmed;
+    document.getElementById('output-intro').textContent = trimmed;
+    document.getElementById('count-intro').textContent = `${trimmed.length}字 / 250字`;
+    updateCountClass('count-intro', trimmed.length, 250);
+    renderValidation(currentData);
+  });
+});
+
+// ── 5. ランキング最適化 ──
+document.getElementById('btn-ai-ranking').addEventListener('click', () => {
+  runAI('btn-ai-ranking', async () => {
+    const result = await optimizeForRanking(currentData);
+    // Parse title and intro from result
+    const titleMatch = result.match(/タイトル[：:](.+)/);
+    const introMatch = result.match(/紹介文[：:]([\s\S]+)/);
+    if (titleMatch) {
+      const newTitle = titleMatch[1].trim().substring(0, 30);
+      currentData.title = newTitle;
+      currentData.rolls.title = newTitle;
+      document.getElementById('result-title').textContent = `【${newTitle}】`;
+    }
+    if (introMatch) {
+      const newIntro = introMatch[1].trim().substring(0, 250);
+      currentData.profile.intro = newIntro;
+      document.getElementById('output-intro').textContent = newIntro;
+      document.getElementById('count-intro').textContent = `${newIntro.length}字 / 250字`;
+      updateCountClass('count-intro', newIntro.length, 250);
+    }
+    renderValidation(currentData);
+  });
+});
+
+// Override the original renderResult to also enable AI buttons
+const _origRenderResult = renderResult;
+renderResult = function(data) {
+  _origRenderResult(data);
+  updateKeyStatus();
+};
+
+// ── 6. 立ち絵プロンプト生成 ──
+const imgPromptOverlay = document.getElementById('img-prompt-overlay');
+let lastImagePromptRaw = '';
+
+document.getElementById('btn-ai-imgprompt').addEventListener('click', () => {
+  runAI('btn-ai-imgprompt', async () => {
+    const result = await generateImagePrompt(currentData);
+    lastImagePromptRaw = result;
+
+    // Parse sections
+    const container = document.getElementById('img-prompt-content');
+    container.innerHTML = '';
+
+    const sections = [
+      { label: 'NovelAI / Stable Diffusion用', regex: /【NovelAI[^】]*】\s*([\s\S]*?)(?=【|$)/ },
+      { label: 'ネガティブプロンプト', regex: /【ネガティブ[^】]*】\s*([\s\S]*?)(?=【|$)/ },
+      { label: '自然言語プロンプト（Imagen / DALL-E / Midjourney用）', regex: /【自然言語[^】]*】\s*([\s\S]*?)(?=【|$)/ },
+    ];
+
+    let parsed = false;
+    sections.forEach((sec, idx) => {
+      const match = result.match(sec.regex);
+      const text = match ? match[1].trim() : '';
+      if (!text) return;
+      parsed = true;
+
+      const div = document.createElement('div');
+      div.className = 'img-prompt-section';
+      div.innerHTML = `<h4>${sec.label}</h4>`;
+
+      const textarea = document.createElement('textarea');
+      textarea.className = 'img-prompt-text';
+      textarea.value = text;
+      textarea.readOnly = true;
+      textarea.rows = Math.min(8, text.split('\n').length + 1);
+      div.appendChild(textarea);
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn-copy-prompt';
+      copyBtn.textContent = '📋 コピー';
+      copyBtn.style.marginTop = '0.4rem';
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(text).then(() => showToast(`${sec.label}をコピーしました`, 'success'));
+      });
+      div.appendChild(copyBtn);
+
+      container.appendChild(div);
+    });
+
+    if (!parsed) {
+      // Fallback: show raw result
+      const div = document.createElement('div');
+      div.className = 'img-prompt-section';
+      div.innerHTML = '<h4>生成結果</h4>';
+      const textarea = document.createElement('textarea');
+      textarea.className = 'img-prompt-text';
+      textarea.value = result;
+      textarea.readOnly = true;
+      textarea.rows = 12;
+      div.appendChild(textarea);
+      container.appendChild(div);
+    }
+
+    imgPromptOverlay.classList.add('show');
+  });
+});
+
+document.getElementById('btn-copy-all-prompts').addEventListener('click', () => {
+  navigator.clipboard.writeText(lastImagePromptRaw).then(() => showToast('全プロンプトをコピーしました', 'success'));
+});
+document.getElementById('btn-close-imgprompt').addEventListener('click', () => {
+  imgPromptOverlay.classList.remove('show');
+});
+imgPromptOverlay.addEventListener('click', (e) => {
+  if (e.target === imgPromptOverlay) imgPromptOverlay.classList.remove('show');
+});
+
+  </script>
+</body>
+</html>
