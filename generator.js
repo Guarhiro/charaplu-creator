@@ -23,6 +23,7 @@ export function generateAll() {
   rolls.culture = pick('cultureLevel');
   rolls.location = pick('location');
   rolls.genre = pick('genre');
+  rolls.chatClass = pick('chatClass');
 
   // キャラ基本情報
   rolls.age = pick('charAge');
@@ -117,6 +118,19 @@ ${r.charName}は{{user}}に対して${r.relationship}の関係にある。`);
 - 好感↑ 執着↑：溺愛、過保護、束縛
 - 好感↓ 執着↑：ストーカー的、歪んだ愛
 - 好感↓ 執着↓：無関心、冷淡`);
+
+  // チャット分類とステータス表示
+  sections.push(`【チャット分類と毎ターンのステータス表示】
+ゲームジャンル：${r.chatClass.type}
+（${r.chatClass.desc}）
+
+【重要】AIは毎回の返信の一番最後に、必ず現在のステータスを以下の形式で出力してください：
+
+\`\`\`
+${r.chatClass.status}
+\`\`\`
+
+※数値や状態は、物語の展開や{{user}}の行動に応じて適切に変動させてください。`);
 
   // ストーリー展開
   sections.push(`【ストーリーライン】

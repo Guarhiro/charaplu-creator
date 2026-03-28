@@ -50,6 +50,7 @@ async function startRoll() {
     { key: 'cultureLevel', name: '文化レベル' },
     { key: 'location', name: '舞台・ロケーション' },
     { key: 'genre', name: 'ジャンル・テーマ' },
+    { key: 'chatClass', name: 'チャット分類' },
     { key: 'charAge', name: 'キャラ年齢帯' },
     { key: 'hairColor', name: '髪色' },
     { key: 'hairStyle', name: '髪型' },
@@ -89,11 +90,12 @@ async function startRoll() {
     item.className = 'roll-item';
     item.style.animationDelay = `${i * 30}ms`;
     const items = TABLES[cat.key]?.items || [];
-    const result = items[(diceVal - 1) % items.length] || `D16=${diceVal}`;
+    const resultObj = items[(diceVal - 1) % items.length] || `D16=${diceVal}`;
+    const resultStr = typeof resultObj === 'object' ? (resultObj.type || resultObj.name) : resultObj;
     item.innerHTML = `
       <span class="roll-category">${cat.name}</span>
       <span class="roll-dice">${diceVal}</span>
-      <span class="roll-result">${result}</span>
+      <span class="roll-result">${resultStr}</span>
     `;
     rollLog.appendChild(item);
     rollLog.scrollTop = rollLog.scrollHeight;
@@ -154,6 +156,7 @@ function renderResult(data) {
     { label: '文化レベル', value: r.culture },
     { label: '舞台', value: r.location },
     { label: 'ジャンル', value: r.genre },
+    { label: 'チャット', value: r.chatClass?.type || '不明' },
     { label: 'キャラ名', value: r.charName },
     { label: '年齢', value: r.age },
     { label: '容姿', value: `${r.hairColor} × ${r.hairStyle}` },
