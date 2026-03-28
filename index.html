@@ -2408,7 +2408,7 @@ async function enhancePrompt(data) {
   const sys = `あなたはGemini Gem「キャラぷ」のプロンプト設計の専門家です。
 ダイスロールで生成された下書きプロンプトを、プロフェッショナル品質に推敲してください。
 ルール：
-- 出力は4000字以内に厳守
+- 出力は4000字以内に厳守（なるべく情報を詳述し上限いっぱいのボリュームにすること）
 - {{user}}表記を維持
 - 【】セクション構造を維持
 - 好感度・執着度の内部管理システムを維持
@@ -2511,7 +2511,7 @@ async function enhanceCharProfile(data) {
   const sys = `あなたはキャラぷのキャラクター設計の専門家です。
 キャラの紹介文を、魅力的で読者を惹きつける文章に書き換えてください。
 ルール：
-- 250字以内に厳守
+- 250字以内に厳守（なるべく情報を詰めて250字ギリギリまで克明に描写すること）
 - {{user}}表記を維持
 - 衝撃ワードやフック要素を含める（ランキング上位の傾向を意識）
 - キャラの属性・関係性・ジャンルの魅力を凝縮
@@ -3090,7 +3090,7 @@ document.getElementById('btn-ai-prompt').addEventListener('click', () => {
     const result = await enhancePrompt(currentData);
     const trimmed = result.substring(0, 4000);
     currentData.charSetting.prompt = trimmed;
-    document.getElementById('output-prompt').textContent = trimmed;
+    document.getElementById('output-prompt').value = trimmed;
     document.getElementById('count-prompt').textContent = `${trimmed.length}字 / 4000字`;
     updateCountClass('count-prompt', trimmed.length, 4000);
     renderValidation(currentData);
@@ -3138,7 +3138,7 @@ document.getElementById('btn-ai-profile').addEventListener('click', () => {
     const result = await enhanceCharProfile(currentData);
     const trimmed = result.substring(0, 250);
     currentData.profile.intro = trimmed;
-    document.getElementById('output-intro').textContent = trimmed;
+    document.getElementById('output-intro').value = trimmed;
     document.getElementById('count-intro').textContent = `${trimmed.length}字 / 250字`;
     updateCountClass('count-intro', trimmed.length, 250);
     renderValidation(currentData);
@@ -3161,7 +3161,7 @@ document.getElementById('btn-ai-ranking').addEventListener('click', () => {
     if (introMatch) {
       const newIntro = introMatch[1].trim().substring(0, 250);
       currentData.profile.intro = newIntro;
-      document.getElementById('output-intro').textContent = newIntro;
+      document.getElementById('output-intro').value = newIntro;
       document.getElementById('count-intro').textContent = `${newIntro.length}字 / 250字`;
       updateCountClass('count-intro', newIntro.length, 250);
     }
