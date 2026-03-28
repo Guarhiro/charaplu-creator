@@ -1103,6 +1103,20 @@ body {
     </div>
   </div>
 
+  <!-- Save/Load Modal -->
+  <div class="modal-overlay" id="save-modal-overlay">
+    <div class="modal" style="max-width: 600px; width: 95%; max-height: 85vh; overflow-y: auto;">
+      <h3>📂 データ保存 / 読込</h3>
+      <p class="modal-hint">現在の作業状態を1〜10のスロットに保存できます。<br>手書きで修正した部分やAIで強化した文章も含めて丸ごと復元可能です。</p>
+      <div id="save-slot-list" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+        <!-- Slots injected here by JS -->
+      </div>
+      <div class="modal-actions" style="margin-top: 1.5rem;">
+        <button class="modal-btn modal-btn-ghost" id="btn-save-close">閉じる</button>
+      </div>
+    </div>
+  </div>
+
   <header class="header">
     <div class="header-content">
       <div class="logo">
@@ -1111,6 +1125,9 @@ body {
       </div>
       <p class="subtitle">フルオートAIキャラチャットプロンプトジェネレーター</p>
       <div class="header-actions">
+        <button class="btn-settings" id="btn-save-modal">
+          <span>📂 データ保存/読込</span>
+        </button>
         <button class="btn-settings" id="btn-settings">
           <span class="key-status" id="key-status"></span>
           <span>⚙️ APIキー設定</span>
@@ -3105,6 +3122,102 @@ function updateCountClass(id, count, limit) {
     el.classList.remove('warning');
   }
 }
+
+// ── セーブデータ管理（10スロット） ──
+const SAVE_SLOT_KEY = 'charaplu_saves';
+function getSaves() {
+  try { return JSON.parse(localStorage.getItem(SAVE_SLOT_KEY)) || new Array(10).fill(null); }
+  catch { return new Array(10).fill(null); }
+}
+
+window.saveToSlot = function(idx) {
+  if (!currentData) { alert('保存するデータがありません（先にダイスを振ってください）。'); return; }
+  const saves = getSaves();
+  saves[idx] = {
+    timestamp: new Date().toLocaleString('ja-JP'),
+    name: currentData.profile?.charName || '名無し',
+    title: currentData.title || '無題',
+    data: currentData
+  };
+  localStorage.setItem(SAVE_SLOT_KEY, JSON.stringify(saves));
+  renderSaveSlots();
+  alert(`スロット${idx + 1} に保存しました！`);
+};
+
+window.loadFromSlot = function(idx) {
+  const saves = getSaves();
+  if (!saves[idx]) return;
+  currentData = saves[idx].data;
+  
+  // UIリセットと再描画
+  document.getElementById('save-modal-overlay').classList.remove('show');
+  document.getElementById('roll-progress').style.display = 'none';
+  document.getElementById('result-section').style.display = 'block';
+  renderResult(currentData);
+  document.getElementById('result-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+window.deleteSlot = function(idx) {
+  if (!confirm(`スロット${idx + 1} のセーブデータを削除しますか？`)) return;
+  const saves = getSaves();
+  saves[idx] = null;
+  localStorage.setItem(SAVE_SLOT_KEY, JSON.stringify(saves));
+  renderSaveSlots();
+};
+
+function escapeHtmlSave(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+window.renderSaveSlots = function() {
+  const list = document.getElementById('save-slot-list');
+  if (!list) return;
+  const saves = getSaves();
+  list.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const s = saves[i];
+    const isSaved = !!s;
+    const item = document.createElement('div');
+    item.style = 'display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--surface-light); border-radius: 8px; border: 1px solid var(--border-color);';
+    item.innerHTML = `
+      <div style="flex:1; overflow:hidden; padding-right: 0.5rem;">
+        <div style="font-weight: bold; margin-bottom: 0.25rem; font-size: 0.95rem;">
+          <span style="display:inline-block; width:2ch; color:var(--accent-2); margin-right: 0.5rem;">${i + 1}</span>
+          ${isSaved ? escapeHtmlSave(s.name) : '<span style="color:var(--text-muted)">空きスロット</span>'}
+        </div>
+        ${isSaved ? `<div style="font-size: 0.8rem; color:var(--text-secondary); text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">${s.timestamp} - ${escapeHtmlSave(s.title)}</div>` : '<div style="font-size: 0.8rem; color:var(--surface-light);">--</div>'}
+      </div>
+      <div style="display:flex; gap:0.5rem; flex-shrink: 0;">
+        <button class="modal-btn modal-btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.85rem;" onclick="saveToSlot(${i})">保存</button>
+        <button class="modal-btn ${isSaved ? '' : 'modal-btn-ghost'}" style="padding: 0.3rem 0.6rem; font-size: 0.85rem;" ${isSaved ? '' : 'disabled'} onclick="loadFromSlot(${i})">読込</button>
+        <button class="modal-btn modal-btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.85rem;" ${isSaved ? '' : 'disabled'} onclick="deleteSlot(${i})">削除</button>
+      </div>
+    `;
+    list.appendChild(item);
+  }
+};
+
+// モーダル開閉制御
+const btnSaveModal = document.getElementById('btn-save-modal');
+if (btnSaveModal) {
+  btnSaveModal.addEventListener('click', () => {
+    window.renderSaveSlots();
+    document.getElementById('save-modal-overlay').classList.add('show');
+  });
+}
+const btnSaveClose = document.getElementById('btn-save-close');
+if (btnSaveClose) {
+  btnSaveClose.addEventListener('click', () => {
+    document.getElementById('save-modal-overlay').classList.remove('show');
+  });
+}
+document.getElementById('save-modal-overlay')?.addEventListener('click', (e) => {
+  if (e.target.id === 'save-modal-overlay') {
+    e.target.classList.remove('show');
+  }
+});
 
 
 // ═══ AI Integration UI ═══
