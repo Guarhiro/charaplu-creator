@@ -1,11 +1,11 @@
 // generator.js — プロンプト自動生成ロジック
-import { rollD16, rollD64, rollD128, rollD9, rollPercent } from './dice.js';
+import { rollD16, rollD64, rollD128, rollD256, rollD9, rollPercent } from './dice.js';
 import { TABLES } from './tables.js';
 
 function pick(table) {
   const t = TABLES[table];
   const dice = t.dice || 16;
-  const idx = (dice === 128 ? rollD128() : dice === 64 ? rollD64() : dice === 9 ? rollD9() : rollD16());
+  const idx = (dice === 256 ? rollD256() : dice === 128 ? rollD128() : dice === 64 ? rollD64() : dice === 9 ? rollD9() : rollD16());
   return t.items[idx % t.items.length];
 }
 
@@ -231,8 +231,17 @@ function buildKeywordBook(r) {
 
   // NPC生成ヘルパー
   function genNPC() {
+    const npcGender = pick('gender');
+    const surname = pick('charNameFirst');
+    let givenName = '';
+    if (npcGender.includes('女')) {
+      givenName = pick('charNameLastFemale');
+    } else {
+      givenName = pick('charNameLastMale');
+    }
+
     return {
-      name: `${pick('npcNameFirst')} ${pick('npcNameLast')}`,
+      name: `${surname} ${givenName}`,
       role: pick('npcRole'),
       personality: pick('npcPersonality')
     };
