@@ -17,3 +17,7 @@ export function rollD9() {
 export function rollPercent() {
   return Math.floor(Math.random() * 101);
 }
+
+export function rollD128() {
+  return Math.floor(Math.random() * 128);
+}

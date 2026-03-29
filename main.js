@@ -51,6 +51,7 @@ async function startRoll() {
     { key: 'location', name: '舞台・ロケーション' },
     { key: 'genre', name: 'ジャンル・テーマ' },
     { key: 'chatClass', name: 'チャット分類' },
+    { key: 'gender', name: '性別' },
     { key: 'charAge', name: 'キャラ年齢帯' },
     { key: 'hairColor', name: '髪色' },
     { key: 'hairStyle', name: '髪型' },
@@ -77,7 +78,8 @@ async function startRoll() {
   const rollDuration = 80; // ms per category
   for (let i = 0; i < categories.length; i++) {
     const cat = categories[i];
-    const diceVal = Math.floor(Math.random() * 16) + 1;
+    const maxDice = TABLES[cat.key]?.dice || 16;
+    const diceVal = Math.floor(Math.random() * maxDice) + 1;
 
     // ダイスの数字をアニメーション
     diceNumber.textContent = diceVal;
@@ -158,6 +160,7 @@ function renderResult(data) {
     { label: 'ジャンル', value: r.genre },
     { label: 'チャット', value: r.chatClass?.type || '不明' },
     { label: 'キャラ名', value: r.charName },
+    { label: '性別', value: r.gender },
     { label: '年齢', value: r.age },
     { label: '容姿', value: `${r.hairColor} × ${r.hairStyle}` },
     { label: '瞳', value: r.eyeColor },

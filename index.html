@@ -1234,6 +1234,10 @@ function rollPercent() {
   return Math.floor(Math.random() * 101);
 }
 
+function rollD128() {
+  return Math.floor(Math.random() * 128);
+}
+
 // tables.js — D16/D64 要素マッピングテーブル
 
 const TABLES = {
@@ -1612,20 +1616,93 @@ const TABLES = {
     ]
   },
 
-  // ══════ キャラ名（D16×D16＝256通り、据え置き） ══════
-  charNameFirst: {
-    name: '名前（姓）', dice: 16,
+  // ══════ キャラクター性別（D16） ══════
+  gender: {
+    name: '性別', dice: 16,
     items: [
-      '黒瀬','白峰','紅月','蒼井','神崎','氷室','鷹司','御影',
-      '桐生','朝霧','深淵','鬼頭','壬生','結城','七瀬','夜叉丸'
+      '男','女','男','女','男','女','男','女',
+      '男','女','男','女','男','女','性別不明','中性'
     ]
   },
 
-  charNameLast: {
-    name: '名前（名）', dice: 16,
+  // ══════ キャラ名（D128） ══════
+  charNameFirst: {
+    name: '名前（姓）', dice: 128,
     items: [
-      '零','蓮','暁','凛','紫苑','焔','雪','奏',
-      '律','朔','環','薫','透','真','悠','灯'
+      '黒瀬','白峰','紅月','蒼井','神崎','氷室','鷹司','御影',
+      '桐生','朝霧','深淵','鬼頭','壬生','結城','七瀬','夜叉丸',
+      '月城','霧島','影山','黒羽','白銀','夜宮','雷堂','天羽',
+      '紅羽','炎堂','剣崎','鴉羽','銀月','龍司','蒼龍','紫電',
+      '烏丸','九条','一条','十六夜','辰巳','水無月','葉月','如月',
+      '天城','海堂','霜月','雷霆','暁月','夕霧','蒼穹','黒曜',
+      '白夜','深夜','月影','星詠','霊峰','冥堂','炎上','氷刃',
+      '鏡花','龍胆','蛇淵','灼熱','煉獄','幽冥','虚無','闇夜',
+      '光陰','彼岸','常世','黄泉','冥府','六道','奈落','業火',
+      '雲雀','千鳥','鶴丸','燕尾','孔雀',
+      'クロフォード','ブラックウッド','シルバーストーン','オサリバン','フィッツジェラルド','バートン',
+      'ヨハンセン','スヴェンソン','アンダーソン',
+      'ヴォルコフ','ペトロフ','ニコラエフ','イワノフ','ヴァレンティン',
+      'シュミット','ミュラー','バウアー','リヒター','ヴァーグナー','フォンシュタイン','ハーツフェルド',
+      'ラミレス','サンティアゴ','デラクルス','マルティネス','ガルシア','ゴンザレス','ロドリゲス','フローレス',
+      'ロッシ','フェラーリ','コンティ','マリーニ',
+      'ベルナール','ルグラン','デュポン','モロー',
+      'チェン','ワン','リュウ',
+      'パク','キム','ナム',
+      'グエン','ファン',
+      'アフメド','アリ','カリム','ハッサン','ムスタファ','スミス'
+    ]
+  },
+
+  charNameLastMale: {
+    name: '名前（名・男）', dice: 128,
+    items: [
+      '零','蓮','暁','焔','朔','透','真','悠','律',
+      '陽','翔','颯','駿','凌','煌','瞬','嵐',
+      '剣','刃','龍','虎','鷹','鋼','雷','閃',
+      '響','弦','絆','命','風','幻','夢','天',
+      '玄','輝','光','明','清','深','剛','武',
+      '将','英','勇','烈','雄','煉','碧','誠',
+      '湊','旭','蒼','凰','岳','峻','壮','慧',
+      '航','魁','燦','瑛','炎','銀','稜','晶',
+      '猛','疾','覇','汰','豪','稔','純','凱',
+      'ライオネル','オスカー','マクスウェル','ヘクター','カルヴィン','ローランド',
+      'エイリーク','シグフリード','オーディン','トール','レイフ',
+      'アレクセイ','ドミトリー','ミハイル','ヴラジミール','ボリス','セルゲイ',
+      'フリードリヒ','ハインリヒ','ウォルター','ゲルハルト','クラウス',
+      'ディエゴ','マティアス','イグナシオ','レオナルド',
+      'マッテオ','ロレンツォ','ヴィットリオ','フラヴィオ',
+      'アルマン','フロラン','ティボー','バスティアン',
+      'カリム','ザイド','ユーセフ','ラシード',
+      'ジョンウォン','ウェイ','ヒョン','チウ',
+      'バオ','タン','フック','ミン','クアン',
+      'アルフレッド','ベネディクト','アドリアン','テオドール',
+      'ジン','ソラ','ハヤテ','カイ'
+    ]
+  },
+
+  charNameLastFemale: {
+    name: '名前（名・女）', dice: 128,
+    items: [
+      '凛','紫苑','雪','奏','環','薫','灯',
+      '花','桜','楓','杏','萩','百合','撫子','桔梗',
+      '蛍','椿','藤','菊','梅','牡丹','霞','雫',
+      '夕','宵','星','彩','虹','珠','瑠','璃',
+      '玲','紬','朱','茜','橙','音','翠','緋',
+      '紅','白','鏡','夢','姫','麗','雅','優',
+      '弥','愛','縁','光','命','和','暖','澄',
+      '結','空','海','月','風','華','泉','汐',
+      '凪','那','詩','穂','舞','晴','絃','沙',
+      '渚','涼','朋','香','美','咲',
+      'アリス','セシリア','ヴィクトリア','コーデリア','ロザリンド','オーロラ',
+      'インゲ','アストリッド','シグリッド','ヘルガ','ブリンヒルド',
+      'ナジェージダ','リュドミラ','ズラタ','ミラ','イリーナ',
+      'エルフリーデ','マティルダ','ローゼ','イルゼ','ヘルタ',
+      'カルメン','ロサリオ','ラクエル','キアラ','フィオレッラ',
+      'オーレリー','マノン','ロール','イネス','セシル',
+      'レイラ','ファーティマ','ヤスミン','ズライカ',
+      'リン','ユン','ジャスミン','ラン','レン','ミン',
+      'アメリア','イヴリン','クリスタル','ベアトリス',
+      'セラフィナ','アリシア','ミランダ','エメラルダ','ロザリア','ロクサーヌ'
     ]
   },
 
@@ -1776,7 +1853,7 @@ const TABLES = {
 function pick(table) {
   const t = TABLES[table];
   const dice = t.dice || 16;
-  const idx = (dice === 64 ? rollD64() : dice === 9 ? rollD9() : rollD16());
+  const idx = (dice === 128 ? rollD128() : dice === 64 ? rollD64() : dice === 9 ? rollD9() : rollD16());
   return t.items[idx % t.items.length];
 }
 
@@ -1797,6 +1874,7 @@ function generateAll() {
   rolls.chatClass = pick('chatClass');
 
   // キャラ基本情報
+  rolls.gender = pick('gender');
   rolls.age = pick('charAge');
   rolls.hairColor = pick('hairColor');
   rolls.hairStyle = pick('hairStyle');
@@ -1828,7 +1906,11 @@ function generateAll() {
 
   // 名前
   rolls.lastName = pick('charNameFirst');
-  rolls.firstName = pick('charNameLast');
+  if (rolls.gender.includes('女')) {
+    rolls.firstName = pick('charNameLastFemale');
+  } else {
+    rolls.firstName = pick('charNameLastMale');
+  }
   rolls.charName = `${rolls.lastName} ${rolls.firstName}`;
 
   // タイトル
@@ -1851,7 +1933,7 @@ function generateAll() {
 
 // ─── プロフィール ───
 function buildProfile(r) {
-  const intro = `${r.culture}の${r.location}を舞台にした${r.genre}。${r.charName}（${r.age}）は${r.attribute}な${r.relationship}。${r.mbti}の性格で${r.speechStyle}が特徴。{{user}}との関係は次第に変化していく——。`;
+  const intro = `${r.culture}の${r.location}を舞台にした${r.genre}。${r.charName}（性別：${r.gender} / ${r.age}）は${r.attribute}な${r.relationship}。${r.mbti}の性格で${r.speechStyle}が特徴。{{user}}との関係は次第に変化していく——。`;
   return {
     charName: r.charName,
     intro: truncate(intro, 250)
@@ -1869,14 +1951,15 @@ ${r.culture}の${r.location}。${r.genre}をテーマとした物語。
 
   // キャラ設定
   sections.push(`【メインキャラ：${r.charName}】
+性別：${r.gender}
 年齢：${r.age}
-容姿：${r.hairColor}の${r.hairStyle}、${r.eyeColor}の瞳
-性格：${r.mbti}、${r.enneagram}
-属性：${r.attribute}
+容姿：${r.hairColor}の${r.hairStyle}。瞳は${r.eyeColor}。
 一人称：${r.firstPerson}
-口調：${r.speechStyle}
-フェチ：${r.fetish}
-${r.charName}は{{user}}に対して${r.relationship}の関係にある。`);
+口調・語尾：${r.speechStyle}
+性格(MBTI)：${r.mbti}
+内面(ｴﾆｱｸﾞﾗﾑ)：${r.enneagram}
+属性：${r.attribute}
+フェチ・執着対象：${r.fetish}`);
 
   // ゲームシステム
   sections.push(`【内部ステータス（参考値）】
@@ -2809,6 +2892,7 @@ async function startRoll() {
     { key: 'location', name: '舞台・ロケーション' },
     { key: 'genre', name: 'ジャンル・テーマ' },
     { key: 'chatClass', name: 'チャット分類' },
+    { key: 'gender', name: '性別' },
     { key: 'charAge', name: 'キャラ年齢帯' },
     { key: 'hairColor', name: '髪色' },
     { key: 'hairStyle', name: '髪型' },
@@ -2835,7 +2919,8 @@ async function startRoll() {
   const rollDuration = 80; // ms per category
   for (let i = 0; i < categories.length; i++) {
     const cat = categories[i];
-    const diceVal = Math.floor(Math.random() * 16) + 1;
+    const maxDice = TABLES[cat.key]?.dice || 16;
+    const diceVal = Math.floor(Math.random() * maxDice) + 1;
 
     // ダイスの数字をアニメーション
     diceNumber.textContent = diceVal;
@@ -2916,6 +3001,7 @@ function renderResult(data) {
     { label: 'ジャンル', value: r.genre },
     { label: 'チャット', value: r.chatClass?.type || '不明' },
     { label: 'キャラ名', value: r.charName },
+    { label: '性別', value: r.gender },
     { label: '年齢', value: r.age },
     { label: '容姿', value: `${r.hairColor} × ${r.hairStyle}` },
     { label: '瞳', value: r.eyeColor },

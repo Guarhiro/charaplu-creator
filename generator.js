@@ -1,11 +1,11 @@
 // generator.js — プロンプト自動生成ロジック
-import { rollD16, rollD64, rollD9, rollPercent } from './dice.js';
+import { rollD16, rollD64, rollD128, rollD9, rollPercent } from './dice.js';
 import { TABLES } from './tables.js';
 
 function pick(table) {
   const t = TABLES[table];
   const dice = t.dice || 16;
-  const idx = (dice === 64 ? rollD64() : dice === 9 ? rollD9() : rollD16());
+  const idx = (dice === 128 ? rollD128() : dice === 64 ? rollD64() : dice === 9 ? rollD9() : rollD16());
   return t.items[idx % t.items.length];
 }
 
@@ -26,6 +26,7 @@ export function generateAll() {
   rolls.chatClass = pick('chatClass');
 
   // キャラ基本情報
+  rolls.gender = pick('gender');
   rolls.age = pick('charAge');
   rolls.hairColor = pick('hairColor');
   rolls.hairStyle = pick('hairStyle');
@@ -57,7 +58,11 @@ export function generateAll() {
 
   // 名前
   rolls.lastName = pick('charNameFirst');
-  rolls.firstName = pick('charNameLast');
+  if (rolls.gender.includes('女')) {
+    rolls.firstName = pick('charNameLastFemale');
+  } else {
+    rolls.firstName = pick('charNameLastMale');
+  }
   rolls.charName = `${rolls.lastName} ${rolls.firstName}`;
 
   // タイトル
@@ -80,7 +85,7 @@ export function generateAll() {
 
 // ─── プロフィール ───
 function buildProfile(r) {
-  const intro = `${r.culture}の${r.location}を舞台にした${r.genre}。${r.charName}（${r.age}）は${r.attribute}な${r.relationship}。${r.mbti}の性格で${r.speechStyle}が特徴。{{user}}との関係は次第に変化していく——。`;
+  const intro = `${r.culture}の${r.location}を舞台にした${r.genre}。${r.charName}（性別：${r.gender} / ${r.age}）は${r.attribute}な${r.relationship}。${r.mbti}の性格で${r.speechStyle}が特徴。{{user}}との関係は次第に変化していく——。`;
   return {
     charName: r.charName,
     intro: truncate(intro, 250)
@@ -98,14 +103,15 @@ ${r.culture}の${r.location}。${r.genre}をテーマとした物語。
 
   // キャラ設定
   sections.push(`【メインキャラ：${r.charName}】
+性別：${r.gender}
 年齢：${r.age}
-容姿：${r.hairColor}の${r.hairStyle}、${r.eyeColor}の瞳
-性格：${r.mbti}、${r.enneagram}
-属性：${r.attribute}
+容姿：${r.hairColor}の${r.hairStyle}。瞳は${r.eyeColor}。
 一人称：${r.firstPerson}
-口調：${r.speechStyle}
-フェチ：${r.fetish}
-${r.charName}は{{user}}に対して${r.relationship}の関係にある。`);
+口調・語尾：${r.speechStyle}
+性格(MBTI)：${r.mbti}
+内面(ｴﾆｱｸﾞﾗﾑ)：${r.enneagram}
+属性：${r.attribute}
+フェチ・執着対象：${r.fetish}`);
 
   // ゲームシステム
   sections.push(`【内部ステータス（参考値）】
