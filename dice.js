@@ -4,6 +4,10 @@ export function rollD16() {
   return Math.floor(Math.random() * 16);
 }
 
+export function rollD32() {
+  return Math.floor(Math.random() * 32);
+}
+
 export function rollD64() {
   return Math.floor(Math.random() * 64);
 }
