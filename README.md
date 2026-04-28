@@ -10,6 +10,24 @@ npm start
 
 ブラウザで `http://localhost:4173` を開きます。
 
+### Windowsで起動
+
+`start-windows.bat` をダブルクリックします。
+
+終了するときは、開いた黒い画面を閉じるか `Ctrl + C` を押します。
+
+### Macで起動
+
+初回だけターミナルで実行権限を付けます。
+
+```bash
+chmod +x start-mac.command
+```
+
+その後は `start-mac.command` をダブルクリックします。
+
+終了するときは、開いたターミナルを閉じるか `Ctrl + C` を押します。
+
 ## 主な機能
 
 - 作品ごとのキャラ管理
