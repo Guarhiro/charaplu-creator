@@ -1,70 +1,18 @@
-# Creative File Studio
+# CROSSOVER DUEL
 
-ローカル環境で動く、創作支援向けのファイル管理アプリです。作品、キャラ設定、取り込み画像、AIによる振り分け、生成プロンプト作成をまとめて扱えます。
+Browser card battle game.
 
-## 起動
+## Publish with GitHub Pages
 
-```bash
-npm start
-```
+1. Create a GitHub repository.
+2. Upload all files in this folder to the repository root.
+3. Open repository Settings.
+4. Open Pages.
+5. Set source to `Deploy from a branch`, branch `main`, folder `/root`.
+6. Open the published GitHub Pages URL.
 
-ブラウザで `http://localhost:4173` を開きます。
+## Notes
 
-### Windowsで起動
-
-`start-windows.bat` をダブルクリックします。
-
-終了するときは、開いた黒い画面を閉じるか `Ctrl + C` を押します。
-
-### Macで起動
-
-初回だけターミナルで実行権限を付けます。
-
-```bash
-chmod +x start-mac.command
-```
-
-その後は `start-mac.command` をダブルクリックします。
-
-終了するときは、開いたターミナルを閉じるか `Ctrl + C` を押します。
-
-## 主な機能
-
-- 作品ごとのキャラ管理
-- キャラ名、ベースプロンプト、ネガティブプロンプト、メモ、基本立ち絵の保存
-- キャラごとにプロンプト形式を自然言語/タグから選択
-- 基本立ち絵から OpenRouter 経由でプロンプト抽出
-- 複数画像の一括取り込み
-- 取り込み時に保存先キャラを手動指定
-- 作品指定時は、その作品内のキャラだけを候補にしたAI判別
-- 画像分析時に自然言語/タグ形式を選択
-- 画像一覧で作品別、キャラ別に閲覧
-- Finderで画像の保存場所を表示
-- 未設定、判別失敗、判別済みの画像整理
-- 画像整理でキャラ別に絞り込み
-- 表情差分やイベントシーン指定からのプロンプト一括生成
-- 差分プロンプトはキャラ設定の形式に合わせて自然言語またはタグで生成
-- 差分プロンプト生成時にキャラメモを加味するか切り替え
-
-## 保存場所
-
-- 作品、キャラ、画像メタデータ: `data/db.json`
-- 取り込み画像、立ち絵: `data/uploads/作品名/キャラ名/`
-- OpenRouter API キー: ブラウザの localStorage
-
-既存の `data/uploads/` 直下にある画像は、アプリ読み込み時に現在の作品・キャラ割当に合わせて自動で移動されます。未割当画像は `作品名/_未割当/` に入ります。
-
-## GitHub 公開時の注意
-
-`.gitignore` で以下を公開対象から外しています。
-
-- `data/*`
-- `node_modules/`
-- `.env`
-- `.DS_Store`
-
-`data/.gitkeep` だけを含めることで、空の `data/` フォルダはリポジトリに残ります。作品データ、キャラ設定、プロンプト、取り込み画像は公開されません。
-
-## OpenRouter
-
-設定画面で API キーとモデルIDを保存してください。画像判別には vision 対応モデルを指定します。
+- The opening movie plays from YouTube: https://youtu.be/7plc55rYrIc
+- Local MP4 files are intentionally excluded from this package.
+- Game progress, collection, deck edit data, and free-play wins are saved in the browser's localStorage.
